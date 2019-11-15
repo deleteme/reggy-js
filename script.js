@@ -2,30 +2,39 @@
     to your site with Javascript */
 
 // prints "hi" in the browser's dev tools console
-const regExpElement = document.querySelector('textarea[name=regexp]');
-const testStringElement = document.querySelector('textarea[name=test-string]');
-const previewElement = document.getElementById('preview');
+const regExpElement = document.querySelector("textarea[name=regexp]");
+const testStringElement = document.querySelector("textarea[name=test-string]");
+const previewElement = document.getElementById("preview");
 
 const render = () => {
   const regexp = new RegExp(regExpElement.innerHTML.trim());
   console.log(regexp);
   const testString = testStringElement.innerHTML;
   const match = testString.match(regexp);
-  console.log('match:', match);
-  const index = regexp.search(testString);
-  previewElement.innerHTML = match;
-}
+  console.log("match:", match);
+  const index = testString.search(match);
+  console.log(index);
+  for (let count = match.length, i = 0; i < count; i++) {
+    
+  }
+  const formatted = testString.replace(
+    match,
+    `<span class='match'>$0</span>`
+  );
+  console.log(formatted);
+  previewElement.innerHTML = formatted;
+};
 
-regExpElement.addEventListener('change', () => {
+regExpElement.addEventListener("change", () => {
   render();
 });
-regExpElement.addEventListener('keyup', () => {
+regExpElement.addEventListener("keyup", () => {
   render();
 });
-testStringElement.addEventListener('change', () => {
+testStringElement.addEventListener("change", () => {
   render();
 });
-testStringElement.addEventListener('keyup', () => {
+testStringElement.addEventListener("keyup", () => {
   render();
 });
 

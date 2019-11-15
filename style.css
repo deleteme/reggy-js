@@ -18,5 +18,6 @@ textarea, #preview {
   min-height: 100px;
 }
 
-#preview {
+.match {
+  color: blue;
 }
