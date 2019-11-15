@@ -9,3 +9,14 @@ h1 {
   font-style: italic;
   color: #373fff;
 }
+
+textarea, #preview {
+  font-size: 2vh;
+  width: 100%;
+  border: 1px solid #ccc;
+  padding: 0.5em;
+  min-height: 200px;
+}
+
+#preview {
+}
