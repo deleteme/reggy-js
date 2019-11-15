@@ -13,9 +13,12 @@ const render = () => {
   const match = testString.match(regexp);
   console.log("match:", match);
   const index = testString.search(match);
+  
   console.log(index);
+  let output = '';
   for (let count = match.length, i = 0; i < count; i++) {
-    
+    const fragment = match[i]
+    testString.replace(fragment,   `<span class='match'>${fragment}</span>`);
   }
   const formatted = testString.replace(
     match,
