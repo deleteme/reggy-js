@@ -15,7 +15,7 @@ textarea, #preview {
   width: 100%;
   border: 1px solid #ccc;
   padding: 0.5em;
-  min-height: 200px;
+  min-height: 100px;
 }
 
 #preview {
