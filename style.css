@@ -5,11 +5,12 @@ body {
   background: white;
 }
 
-.has-error .regexp-panel label {
+.has-error .regexp-panel label,
+.syntax-error {
   color: red;
 }
 
-.has-error textarea[name="regexp"] {
+.has-error .regexp-panel .field {
   border-color: red;
 }
 
