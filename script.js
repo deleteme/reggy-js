@@ -1,8 +1,9 @@
+import { render, html } from 'https://cdn.jsdelivr.net/npm/lit-html@1.1.2';
 const regExpElement = document.querySelector("textarea[name=regexp]");
 const testStringElement = document.querySelector("textarea[name=test-string]");
 const previewElement = document.getElementById("preview");
 
-const render = () => {
+const render1 = () => {
   try {
     const regexp = new RegExp(regExpElement.value.trim());
     console.log(regexp);
@@ -28,8 +29,8 @@ const render = () => {
 
 [regExpElement, testStringElement].forEach(element => {
   ["change", "keyup", "keydown"].forEach(type => {
-    element.addEventListener(type, render);
+    element.addEventListener(type, render1);
   });
 });
 
-render();
+render1();
