@@ -15,17 +15,21 @@ const render = () => {
   const index = testString.search(match);
   
   console.log(index);
+  
   let output = '';
   for (let count = match.length, i = 0; i < count; i++) {
     const fragment = match[i]
     testString.replace(fragment,   `<span class='match'>${fragment}</span>`);
   }
+  
   const formatted = testString.replace(
     match,
     `<span class='match'>$0</span>`
   );
+  
   console.log(formatted);
   previewElement.innerHTML = formatted;
+  log.innerHTML = JSON.stringify(match);
 };
 
 regExpElement.addEventListener("change", () => {
