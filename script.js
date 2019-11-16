@@ -8,32 +8,37 @@ const previewElement = document.getElementById("preview");
 
 const render = () => {
   console.log("regexp str", regExpElement.value.trim());
-  const regexp = new RegExp(regExpElement.value.trim());
-  console.log(regexp);
-  const testString = testStringElement.value;
-  const match = testString.match(regexp);
-  console.log("match:", match);
-  document.body.toggle
-  if (match) {
-    const index = testString.search(match);
+  try {
+    const regexp = new RegExp(regExpElement.value.trim());
+    console.log(regexp);
+    const testString = testStringElement.value;
+    const match = testString.match(regexp);
+    console.log("match:", match);
+    if (match) {
+      const index = testString.search(match);
 
-    console.log(index);
+      console.log(index);
 
-    let output = "";
-    for (let count = match.length, i = 0; i < count; i++) {
-      const fragment = match[i];
-      testString.replace(fragment, `<span class='match'>${fragment}</span>`);
+      let output = "";
+      for (let count = match.length, i = 0; i < count; i++) {
+        const fragment = match[i];
+        testString.replace(fragment, `<span class='match'>${fragment}</span>`);
+      }
+
+      const formatted = testString.replace(
+        match,
+        `<span class='match'>$&</span>`
+      );
+
+      console.log(formatted);
+      previewElement.innerHTML = formatted;
+    } else {
+      previewElement.innerHTML = testString;
     }
-
-    const formatted = testString.replace(
-      match,
-      `<span class='match'>$&</span>`
-    );
-
-    console.log(formatted);
-    previewElement.innerHTML = formatted;
-  } else {
-    previewElement.innerHTML = testString;
+    document.body.classList.toggle("has-error", false);
+  } catch (error) {
+    document.body.classList.toggle("has-error", true);
+    previewElement.innerHTML = error;
   }
 };
 
