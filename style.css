@@ -4,7 +4,7 @@ body {
 }
 
 * {
-  box-sizing: content-box;
+  box-sizing: border-box;
 }
 
 h1 {
@@ -12,15 +12,26 @@ h1 {
   color: #373fff;
 }
 
-textarea,
-#preview {
+.panel {
+  display: flex-row;
+  height: 30vh;
+}
+
+.panel label {
+  xbackground: red;
+}
+
+.panel .field,
+.panel .preview {
   font-size: 30px;
   width: 100%;
   border: 1px solid #ccc;
   padding: 0.5em;
-  min-height: 100px;
+  margin: 0;
+  width: 100%;
 }
 
 .match {
   color: blue;
+  text-decoration: underline;
 }
