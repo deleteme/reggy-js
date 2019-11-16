@@ -1,8 +1,10 @@
-/* CSS files add styling rules to your content */
-
 body {
   font-family: helvetica, arial, sans-serif;
-  margin: 2em;
+  margin: 1em;
+}
+
+* {
+  box-sizing: content-box;
 }
 
 h1 {
@@ -10,8 +12,9 @@ h1 {
   color: #373fff;
 }
 
-textarea, #preview {
-  font-size: 2vh;
+textarea,
+#preview {
+  font-size: 30px;
   width: 100%;
   border: 1px solid #ccc;
   padding: 0.5em;

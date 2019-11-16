@@ -5,37 +5,37 @@
 const regExpElement = document.querySelector("textarea[name=regexp]");
 const testStringElement = document.querySelector("textarea[name=test-string]");
 const previewElement = document.getElementById("preview");
+const logElement = document.getElementById("log");
 
 const render = () => {
-  const regexp = new RegExp(regExpElement.innerHTML.trim());
+  console.log("regexp str", regExpElement.value.trim());
+  const regexp = new RegExp(regExpElement.value.trim());
   console.log(regexp);
-  const testString = testStringElement.innerHTML;
+  const testString = testStringElement.value;
   const match = testString.match(regexp);
   console.log("match:", match);
   const index = testString.search(match);
-  
+
   console.log(index);
-  
-  let output = '';
+
+  let output = "";
   for (let count = match.length, i = 0; i < count; i++) {
-    const fragment = match[i]
-    testString.replace(fragment,   `<span class='match'>${fragment}</span>`);
+    const fragment = match[i];
+    testString.replace(fragment, `<span class='match'>${fragment}</span>`);
   }
-  
-  const formatted = testString.replace(
-    match,
-    `<span class='match'>$0</span>`
-  );
-  
+
+  const formatted = testString.replace(match, `<span class='match'>$&</span>`);
+
   console.log(formatted);
   previewElement.innerHTML = formatted;
-  log.innerHTML = JSON.stringify(match);
+  logElement.innerHTML = JSON.stringify(match);
 };
 
 regExpElement.addEventListener("change", () => {
   render();
 });
-regExpElement.addEventListener("keyup", () => {
+regExpElement.addEventListener("keyup", (e) => {
+  console.log(e);
   render();
 });
 testStringElement.addEventListener("change", () => {
