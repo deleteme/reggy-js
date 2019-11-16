@@ -13,6 +13,7 @@ const render = () => {
   const testString = testStringElement.value;
   const match = testString.match(regexp);
   console.log("match:", match);
+  document.body.toggle
   if (match) {
     const index = testString.search(match);
 
@@ -37,7 +38,7 @@ const render = () => {
 };
 
 [regExpElement, testStringElement].forEach(element => {
-  ["change", "keyup", ""].forEach(type => {
+  ["change", "keyup", "keydown"].forEach(type => {
     element.addEventListener(type, render);
   });
 });

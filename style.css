@@ -1,6 +1,7 @@
 body {
   font-family: helvetica, arial, sans-serif;
   margin: 1em;
+  background: red;
 }
 
 * {
@@ -10,6 +11,13 @@ body {
 h1 {
   font-style: italic;
   color: #373fff;
+}
+
+.panels {
+  background: yellow;
+  display: flex-row;
+  justify-content: space-between;
+  height: 100%;
 }
 
 .panel {
@@ -23,7 +31,7 @@ h1 {
 
 .panel .field,
 .panel .preview {
-  font-size: 30px;
+  font-size: 1.5rem;
   width: 100%;
   border: 1px solid #ccc;
   padding: 0.5em;
