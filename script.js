@@ -1,4 +1,5 @@
 import { render, html } from 'https://cdn.jsdelivr.net/npm/lit-html@1.1.2';
+console.log(render, html);
 const regExpElement = document.querySelector("textarea[name=regexp]");
 const testStringElement = document.querySelector("textarea[name=test-string]");
 const previewElement = document.getElementById("preview");
