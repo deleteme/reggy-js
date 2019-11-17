@@ -11,7 +11,7 @@ export const preview = ({ state}) => {
     console.log("match:", match);
     if (match) {
       const formatted = testString.replace(
-        [...new Set(match)],
+        match,
         `<span class="match">$&</span>`
       );
       content = unsafeHTML(formatted);

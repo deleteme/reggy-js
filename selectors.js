@@ -9,7 +9,6 @@ export const getRegExp = createSelector(
       const flags = Object.entries({
         g: global
       }).reduce((flags, [key, value]) => (value ? flags + key : flags), "");
-      console.log("flags", flags);
       value = new RegExp(regExpString, flags);
     } catch (error) {
       value = error;
