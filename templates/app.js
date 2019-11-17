@@ -15,9 +15,10 @@ export const app = ({ state, setState }) => {
     >
       ${regExpPanel({ state, setState, handler })}
       <section class="panel">
-        <label>Test String</label>
+        <label for="test-string">Test String</label>
         <textarea
           name="testString"
+          id="test-string"
           class="field"
           @keyup=${handler}
           @change=${handler}

@@ -1,5 +1,5 @@
 const initialState = {
-  isGlobal: true,
+  global: true,
   isCaseInsensitive: false,
   regExpString: "[aeiou]",
   testString: "bun lettuce tomato onion bacon cheese patty lettuce bun"
@@ -16,6 +16,7 @@ const isAnyValueDifferent = (oldState, newState) => {
 export const setState = newState => {
   if (newState !== state && isAnyValueDifferent(state, newState)) {
     state = { ...state, ...newState };
+    console.log(state);
   }
 };
 
