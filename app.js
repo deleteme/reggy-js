@@ -9,9 +9,6 @@ const preview = state => {
   let content = "";
   try {
     const regexp = new RegExp(state.regExpString);
-  } catch (error) {
-    setState({ hasError: true });
-  }
     // console.log(regexp);
     const { testString } = state;
     const match = testString.match(regexp);
