@@ -10,7 +10,7 @@ const flag = ({ state, setState, field }) => {
       @change=${e => {
         setState({ [name]: e.target.checked });
       }}
-      .checked=${state.global}
+      .checked=${state[name]}
     />
     <label for="${name}">
       ${label}
@@ -18,13 +18,16 @@ const flag = ({ state, setState, field }) => {
   `;
 };
 
-const flags = ({ state, setState }) => {
-  return repeat([{ name: 'global', label: 'Global' }], ({name}) => {
-    return name;
-  }, (field, index) => {
-    return html`${flag({})}`;
-  });
-}
+const flags = ({ state, setState, flags }) => {
+  return repeat(
+    flags,
+    ({ name }) => name,
+    (field, index) =>
+      html`
+        ${flag({ state, setState, field })}
+      `
+  );
+};
 
 export const regExpPanel = ({ state, setState, handler }) => {
   return html`
@@ -40,6 +43,9 @@ export const regExpPanel = ({ state, setState, handler }) => {
 ${state.regExpString}</textarea
       >
     </section>
-    ${flag({ state, setState, field: { name: "global", label: "Global" } })}
+    ${flags({ state, setState, flags: [
+      { name: "global", label: "Global" },
+      { name: "ignoreCase", label: "Ignore Case" },
+    ] })}
   `;
 };
