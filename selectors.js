@@ -1,27 +1,26 @@
 import { createSelector, createStructuredSelector } from "../packages.js";
+import { makeClassMap } from './lib/make-class-map.js';
+
+const classMap = makeClassMap('');
 
 const getFlags = createStructuredSelector({
-  global: state => state.global,
-  ignoreCase: state => state.ignoreCase,
+  g: state => state.global,
+  i: state => state.ignoreCase
 });
 
 const getFlagsString = createSelector(
   getFlags,
-  (global, ignoreCase) => {
-    return `${global ? 'g' : ''}`;
+  (flags) => {
+    return classMap(flags);
   }
-)
+);
 
 export const getRegExp = createSelector(
   state => state.regExpString,
-  getFlags,
+  getFlagsString,
   (regExpString, flags) => {
     let value;
     try {
-      const flags = Object.entries({
-        g: global,
-        i: ignoreCase,
-      }).reduce((flags, [key, value]) => (value ? flags + key : flags), "");
       value = new RegExp(regExpString, flags);
     } catch (error) {
       value = error;

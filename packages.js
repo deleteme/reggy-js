@@ -5,4 +5,4 @@ import { classMap } from 'https://cdn.jsdelivr.net/npm/lit-html@1.1.2/directives
 import { createSelector, createStructuredSelector } from "https://cdn.jsdelivr.net/npm/reselect@4.0.0/es/index.js";
 
 
-export { render, html, unsafeHTML, repeat, classMap, createSelector };
+export { render, html, unsafeHTML, repeat, classMap, createSelector, createStructuredSelector };
