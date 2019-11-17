@@ -6,7 +6,7 @@ export const preview = ({ state}) => {
   const regexp = getRegExp(state);
   console.log(regexp);
   if (regexp instanceof RegExp) {
-    const match = regexp.test(state.testString);
+    const match = state.testString.match(regexp);
     console.log("match:", match);
     if (match) {
       const formatted = state.testString.replace(
