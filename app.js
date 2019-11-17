@@ -2,35 +2,36 @@ import {
   render,
   html
 } from "https://cdn.jsdelivr.net/npm/lit-html@1.1.2/lit-html.js";
+import { unsafeHTML } from "https://cdn.jsdelivr.net/npm/lit-html@1.1.2/directives/unsafe-html.js";
 import { getState, setState as _setState } from "./store.js";
 
-const preview = (state) => {
+const preview = state => {
+  let content = "";
   try {
     const regexp = new RegExp(state.regExpString);
-    console.log(regexp);
-    const testString = testStringElement.value;
+    // console.log(regexp);
+    const { testString } = state;
     const match = testString.match(regexp);
-    console.log("match:", match);
+    // console.log("match:", match);
     if (match) {
       const formatted = testString.replace(
         [...new Set(match)],
-        `<span class='match'>$&</span>`
+        `<span class="match">$&</span>`
       );
 
-      previewElement.innerHTML = formatted;
+      content = unsafeHTML(formatted);
     } else {
-      previewElement.innerHTML = testString;
+      content = testString;
     }
-    document.body.classList.toggle("has-error", false);
+    //    document.body.classList.toggle("has-error", false);
   } catch (error) {
-    document.body.classList.toggle("has-error", true);
-    previewElement.innerHTML = `<span class="syntax-error">${error}</span>`;
+    //  document.body.classList.toggle("has-error", true);
+    content = `<span class="syntax-error">${error}</span>`;
   }
-
   return html`
-
+    ${content}
   `;
-}
+};
 
 const app = state => {
   const handler = e => {
