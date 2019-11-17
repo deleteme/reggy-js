@@ -9,6 +9,9 @@ const preview = state => {
   let content = "";
   try {
     const regexp = new RegExp(state.regExpString);
+  } catch (error) {
+    setState({ hasError: true });
+  }
     // console.log(regexp);
     const { testString } = state;
     const match = testString.match(regexp);
@@ -28,9 +31,7 @@ const preview = state => {
     //  document.body.classList.toggle("has-error", true);
     content = `<span class="syntax-error">${error}</span>`;
   }
-  return html`
-    ${content}
-  `;
+  return html`${content}`;
 };
 
 const app = state => {
@@ -45,7 +46,7 @@ const app = state => {
         <textarea
           name="regExpString"
           class="field"
-          @keydown=${handler}
+          @keyup=${handler}
           @change=${handler}
         >
 ${state.regExpString}</textarea
@@ -56,7 +57,7 @@ ${state.regExpString}</textarea
         <textarea
           name="testString"
           class="field"
-          @keydown=${handler}
+          @keyup=${handler}
           @change=${handler}
         >
 ${state.testString}</textarea
@@ -77,7 +78,7 @@ const renderApp = () => {
 
 const setState = newState => {
   _setState(newState);
-  renderApp();
+  requestAnimationFrame(renderApp);
 };
 
 renderApp();
