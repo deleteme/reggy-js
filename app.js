@@ -2,25 +2,37 @@ import {
   render,
   html
 } from "https://cdn.jsdelivr.net/npm/lit-html@1.1.2/lit-html.js";
-import { getState, setState } from './store.js';
+import { getState, setState } from "./store.js";
 
-const app = () => {
+const app = state => {
+  const handleChange = e => {
+    const { value, name } = 
+  }
   return html`
     <div class="panels">
       <section class="panel regexp-panel">
         <label>Regular Expression</label>
-        <textarea name="regexp" class="field">ahoy</textarea>
+        <textarea name="regexp" class="field" @change=${
+  e => {
+    console.log('change',e );
+  }
+}>${state.regExpString}</textarea>
       </section>
       <section class="panel">
         <label>Test String</label>
-        <textarea name="test-string" class="field">chips ahoy</textarea>
+        <textarea name="test-string" class="field">${state.testString}</textarea>
       </section>
       <section class="panel">
         <label>Preview</label>
-        <pre id="preview" class="preview"></pre>
+        <pre class="preview"></pre>
       </section>
     </div>
   `;
 };
 
-render(app(), document.getElementById("app"));
+const renderApp = () => {
+  const state = getState();
+  render(app(state), document.getElementById("app"));
+};
+
+renderApp();
