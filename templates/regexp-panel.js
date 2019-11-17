@@ -17,10 +17,11 @@ ${state.regExpString}</textarea
         type="checkbox"
         id="global"
         name="global"
-        @change={e => {
+        @change=${e => {
           console.log(e);
+          handler(e);
         }}
-        checked=${state.global}
+        .checked=${state.global}
       />
       <label for="global">
         Global
