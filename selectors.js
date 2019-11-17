@@ -1,11 +1,16 @@
-import { createSelector } from "../packages.js";
+import { createSelector, classMap } from "../packages.js";
 
 export const getRegExp = createSelector(
   state => state.regExpString,
-  regExpString => {
+  state => state.global,
+  (regExpString, global) => {
     let value;
     try {
-      value = new RegExp(regExpString);
+      const flags = Object.entries({
+        g: global
+      }).reduce((flags, [key, value]) => (value ? flags + key : flags), "");
+      console.log("flags", flags);
+      value = new RegExp(regExpString, flags);
     } catch (error) {
       value = error;
     }

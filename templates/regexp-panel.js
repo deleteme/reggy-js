@@ -13,7 +13,15 @@ export const regExpPanel = ({ state, setState, handler }) => {
       >
 ${state.regExpString}</textarea
       >
-      <input type="checkbox" id="global" name="global" @change={handler} checked=${state.global}/>
+      <input
+        type="checkbox"
+        id="global"
+        name="global"
+        @change={e => {
+          console.log(e);
+        }}
+        checked=${state.global}
+      />
       <label for="global">
         Global
       </label
