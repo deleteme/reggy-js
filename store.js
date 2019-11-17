@@ -1,6 +1,7 @@
 const initialState = {
   global: true,
   ignoreCase: false,
+  multiline: false,
   regExpString: "[aeiou]",
   testString: "bun lettuce tomato onion bacon cheese patty lettuce bun"
 };

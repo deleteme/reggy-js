@@ -46,6 +46,7 @@ ${state.regExpString}</textarea
     ${flags({ state, setState, flags: [
       { name: "global", label: "Global" },
       { name: "ignoreCase", label: "Ignore Case" },
+      { name: "multiline", label: "Multiline" },
     ] })}
   `;
 };

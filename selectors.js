@@ -5,7 +5,8 @@ const classMap = makeClassMap("");
 
 const getFlags = createStructuredSelector({
   g: state => state.global,
-  i: state => state.ignoreCase
+  i: state => state.ignoreCase,
+  m: state => state.multiline
 });
 
 const getFlagsString = createSelector(
