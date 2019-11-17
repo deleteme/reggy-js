@@ -4,11 +4,14 @@ import {
 } from "https://cdn.jsdelivr.net/npm/lit-html@1.1.2/lit-html.js";
 import { unsafeHTML } from "https://cdn.jsdelivr.net/npm/lit-html@1.1.2/directives/unsafe-html.js";
 import { getState, setState as _setState } from "./store.js";
+import { getRegExp } from "./selectors.js";
 
 const preview = state => {
   let content = "";
-  try {
-    const regexp = new RegExp(state.regExpString);
+  const regexp = getRegExp(state);
+  console.log(regexp);
+  if (regexp instanceof RegExp) {
+    //const regexp = new RegExp(state.regExpString);
     // console.log(regexp);
     const { testString } = state;
     const match = testString.match(regexp);
@@ -24,9 +27,9 @@ const preview = state => {
       content = testString;
     }
     //    document.body.classList.toggle("has-error", false);
-  } catch (error) {
+  } else {
     //  document.body.classList.toggle("has-error", true);
-    content = `<span class="syntax-error">${error}</span>`;
+    content = `<span class="syntax-error">${regexp}</span>`;
   }
   return html`${content}`;
 };

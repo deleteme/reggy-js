@@ -7,14 +7,14 @@ const initialState = {
 
 let state = initialState;
 
-const anyValueIsDifferent = (oldState, newState) => {
+const isAnyValueDifferent = (oldState, newState) => {
   return Object.entries(newState).some(([key, value]) => {
     return oldState[key] !== value;
   });
 };
 
 export const setState = newState => {
-  if (newState !== state && anyValueIsDifferent(state, newState)) {
+  if (newState !== state && isAnyValueDifferent(state, newState)) {
     state = { ...state, ...newState };
   }
 };
