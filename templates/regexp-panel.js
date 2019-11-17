@@ -1,21 +1,30 @@
-import { html } from "../packages.js";
+import { html, repeat } from "../packages.js";
 
 const flag = ({ state, setState, field }) => {
+  const { name, label } = field;
   return html`
     <input
       type="checkbox"
-      id=${field.name}
-      name=${field.name}
+      id=${name}
+      name=${name}
       @change=${e => {
-        setState({ [field.name]: e.target.checked });
+        setState({ [name]: e.target.checked });
       }}
       .checked=${state.global}
     />
-    <label for="${field.name}">
-      ${field.label}
+    <label for="${name}">
+      ${label}
     </label>
   `;
 };
+
+const flags = ({ state, setState }) => {
+  return repeat([{ name: 'global', label: 'Global' }], ({name}) => {
+    return name;
+  }, (field, index) => {
+    return html`${flag({})}`;
+  });
+}
 
 export const regExpPanel = ({ state, setState, handler }) => {
   return html`
