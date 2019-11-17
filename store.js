@@ -16,7 +16,7 @@ const isAnyValueDifferent = (oldState, newState) => {
 export const setState = newState => {
   if (newState !== state && isAnyValueDifferent(state, newState)) {
     state = { ...state, ...newState };
-    console.log(state);
+    console.log('state', state);
   }
 };
 

@@ -18,7 +18,8 @@ ${state.regExpString}</textarea
         id="global"
         name="global"
         @change=${e => {
-          console.log(e);
+          console.log('state.global', state.global);
+          console.log('e.target.checked', e.target.checked);
           handler(e);
         }}
         .checked=${state.global}
