@@ -6,17 +6,16 @@ export const preview = ({ state}) => {
   const regexp = getRegExp(state);
   console.log(regexp);
   if (regexp instanceof RegExp) {
-    const { testString } = state;
-    const match = testString.match(regexp);
+    const match = regexp.test(state.testString);
     console.log("match:", match);
     if (match) {
-      const formatted = testString.replace(
-        match,
+      const formatted = state.testString.replace(
+        regexp,
         `<span class="match">$&</span>`
       );
       content = unsafeHTML(formatted);
     } else {
-      content = testString;
+      content = state.testString;
     }
   } else {
     content = unsafeHTML(`<span class="syntax-error">${regexp}</span>`);
