@@ -1,7 +1,8 @@
-import { html, classMap } from "../packages.js";
+import { html } from "../packages.js";
 import { getRegExp } from "../selectors.js";
 import { preview } from "./preview.js";
 import { regExpPanel } from "./regexp-panel.js";
+import { classMap } from '../lib/class-map.js';
 
 export const app = ({ state, setState }) => {
   const handler = e => {
@@ -11,7 +12,9 @@ export const app = ({ state, setState }) => {
   const regExp = getRegExp(state);
   return html`
     <div
-      class=${classMap({ panels: true, "has-error": regExp instanceof Error })}
+      class="${
+        classMap({ panels: true, "has-error": regExp instanceof Error })
+      }"
     >
       ${regExpPanel({ state, setState, handler })}
       <section class="panel">
