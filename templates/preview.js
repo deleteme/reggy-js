@@ -1,9 +1,7 @@
-import { html } from "https://cdn.jsdelivr.net/npm/lit-html@1.1.2/lit-html.js";
-import { unsafeHTML } from "https://cdn.jsdelivr.net/npm/lit-html@1.1.2/directives/unsafe-html.js";
+import { html, unsafeHTML } from "../packages.js";
+import { getRegExp } from "../selectors.js";
 
-import { getRegExp } from "./selectors.js";
-
-export const preview = state => {
+export const preview = ({ state}) => {
   let content = "";
   const regexp = getRegExp(state);
   console.log(regexp);

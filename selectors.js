@@ -1,4 +1,4 @@
-import { createSelector } from "https://cdn.jsdelivr.net/npm/reselect@4.0.0/es/index.js";
+import { createSelector } from "../packages.js";
 
 export const getRegExp = createSelector(
   state => state.regExpString,
