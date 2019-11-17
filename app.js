@@ -1,7 +1,8 @@
-import { render, html } from 'https://cdn.jsdelivr.net/npm/lit-html@1.1.2';
-console.log(render, html);
-
-const appElement = document.getElementById('app');
+import {
+  render,
+  html
+} from "https://cdn.jsdelivr.net/npm/lit-html@1.1.2/lit-html.js";
+import { getState, setState } from './store.js';
 
 const app = () => {
   return html`
@@ -20,7 +21,6 @@ const app = () => {
       </section>
     </div>
   `;
-}
+};
 
-render(app, appElement);
-
+render(app(), document.getElementById("app"));
