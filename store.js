@@ -20,17 +20,22 @@ export const setState = newState => {
   if (newState !== state && isAnyValueDifferent(state, newState)) {
     state = { ...state, ...newState };
     console.log('state', state);
-    requestAnimationFrame(() => {
-      subscribers.forEach(callback => callback());
+    queueMicrotask(() => {
+      subscribers.forEach(invoke);
     });
   }
 };
 
 export const getState = () => state;
 
+const invoke = callback => callback({
+  state: getState(), setState
+});
+
 export const subscribe = callback => {
   subscribers.add(callback);
+  invoke(callback);
   return () => {
     subscribers.delete(callback);
-  }
+  };
 }
