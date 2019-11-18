@@ -18,11 +18,11 @@ export const app = ({ state, setState }) => {
     >
       ${regExpPanel({ state, setState, handler })}
       <section class="panel">
-        <label for="test-string">Test String</label>
+        <label class="label" for="test-string">Test String</label>
         <textarea
           name="testString"
           id="test-string"
-          class="field"
+          class="textarea"
           @keyup=${handler}
           @change=${handler}
         >
@@ -30,7 +30,7 @@ ${state.testString}</textarea
         >
       </section>
       <section class="panel">
-        <label>Preview</label>
+        <label class="label">Preview</label>
         <pre class="preview">${preview({ state })}</pre>
       </section>
     </div>

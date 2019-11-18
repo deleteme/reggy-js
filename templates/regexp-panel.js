@@ -32,11 +32,11 @@ const flags = ({ state, setState, flags }) => {
 export const regExpPanel = ({ state, setState, handler }) => {
   return html`
     <section class="panel regexp-panel">
-      <label for="regexp-string">Regular Expression</label>
+      <label class="label" for="regexp-string">Regular Expression</label>
       <textarea
         name="regExpString"
         id="regexp-string"
-        class="field"
+        class="textarea"
         @keyup=${handler}
         @change=${handler}
       >
