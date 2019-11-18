@@ -1,5 +1,5 @@
 import { render } from "./packages.js";
-import { getState, setState, subscribe } from "./store.js";
+import { subscribe } from "./store.js";
 import { app } from "./templates/app.js";
 
 const renderApp = ({ state, setState }) => {
