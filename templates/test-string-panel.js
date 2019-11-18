@@ -10,7 +10,14 @@ export const testStringPanel = ({ state, setState, handler }) => {
           name="testString"
           id="test-string"
           class="textarea"
-          @keyup=${handler}
+          @keydown=${e => {
+    const target = e.target;
+    requestAnimationFrame(() => {
+          console.log(target.value);
+    handler(e);
+
+    });
+  }}
           @change=${handler}
           spellcheck="false"
         >${state.testString}</textarea

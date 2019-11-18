@@ -48,6 +48,10 @@ body {
   line-height: var(--label-height);
 }
 
+.textarea {
+  caret-color: black;
+}
+
 .textarea,
 .preview {
   font-size: 1.5rem;
