@@ -19,14 +19,14 @@ const flag = ({ state, setState, field }) => {
 };
 
 const flags = ({ state, setState, flags }) => {
-  return repeat(
+  return html`<div class="flags">${repeat(
     flags,
     ({ name }) => name,
     (field, index) =>
       html`
         ${flag({ state, setState, field })}
       `
-  );
+  )}</div>`;
 };
 
 export const regExpPanel = ({ state, setState, handler }) => {
