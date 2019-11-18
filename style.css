@@ -1,10 +1,12 @@
 html, body {
   height: 100%;
   width: 100%;
+  margin: 0;
+  padding: 0;
 }
+
 body {
   font-family: helvetica, arial, sans-serif;
-  margin: 0;
   padding: 1rem;
 }
 
@@ -32,7 +34,6 @@ h1 {
 }
 
 .panels {
-  background: purple;
   display: flex-row;
   justify-content: space-between;
   height: 100%;
@@ -40,8 +41,7 @@ h1 {
 
 .panel {
   --label-height: 2rem;
-  display: flex-row;
-  height: calc(100vh / 3);
+  height: calc(100% / 3);
 }
 
 .label {
@@ -61,7 +61,7 @@ h1 {
   width: 100%;
 }
 
-.field:focus {
+.textarea:focus {
   border-color: blue;
 }
 
