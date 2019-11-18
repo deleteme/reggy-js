@@ -36,6 +36,11 @@ body {
   position: relative;
 }
 
+.panel-header {
+  align-items: center;
+  display: flex;
+}
+
 .panel .panel {
   height: 100%;
   width: 100%;

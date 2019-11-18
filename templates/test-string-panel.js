@@ -2,8 +2,17 @@ import { html, repeat } from "../packages.js";
 import { preview } from "./preview.js";
 import { getMatch } from "../selectors.js";
 
-export const testStringPanel = ({ state, setState, handler }) => {
+const renderMatchCount = ({ state }) => {
   const match = getMatch(state);
+  return match
+    ? html`<small class="match-length">${match.length} ${
+      match.length === 1 ? 'match' : 'matches'
+      }</small>`
+    : '';
+}
+
+export const testStringPanel = ({ state, setState, handler }) => {
+  
   return html`
     <section class="panel test-string-panel-input-mask">
       <section class="panel test-string-panel">
@@ -11,7 +20,7 @@ export const testStringPanel = ({ state, setState, handler }) => {
           <label class="label" for="test-string">
             Test String
           </label>
-          ${ match ? html`<span class="match-length">${match.length}</span>` : '' }
+          ${ renderMatchCount({ state }) }
         </header>
         <textarea
           name="testString"
