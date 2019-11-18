@@ -25,3 +25,11 @@ export const getRegExp = createSelector(
     }
   }
 );
+
+export const getMatch = createSelector(
+  state => state.testString,
+  getRegExp,
+  (testString, regexp) => {
+    return regexp instanceof RegExp ? testString.match(regexp) : null;
+  }
+);

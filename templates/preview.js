@@ -1,12 +1,12 @@
 import { html, unsafeHTML } from "../packages.js";
-import { getRegExp } from "../selectors.js";
+import { getRegExp, getMatch } from "../selectors.js";
 
-export const preview = ({ state}) => {
+export const preview = ({ state }) => {
   let content = "";
   const regexp = getRegExp(state);
   console.log(regexp);
   if (regexp instanceof RegExp) {
-    const match = state.testString.match(regexp);
+    const match = getMatch(state);
     console.log("match:", match);
     if (match) {
       const formatted = state.testString.replace(
