@@ -8,6 +8,8 @@ const initialState = {
 
 let state = initialState;
 
+const subscribers = new Set();
+
 const isAnyValueDifferent = (oldState, newState) => {
   return Object.entries(newState).some(([key, value]) => {
     return oldState[key] !== value;
@@ -18,7 +20,17 @@ export const setState = newState => {
   if (newState !== state && isAnyValueDifferent(state, newState)) {
     state = { ...state, ...newState };
     console.log('state', state);
+    requestAnimationFrame(() => {
+      subscribers.forEach(callback => callback());
+    });
   }
 };
 
 export const getState = () => state;
+
+export const subscribe = callback => {
+  subscribers.add(callback);
+  return () => {
+    subscribers.delete(callback);
+  }
+}
