@@ -3,7 +3,7 @@
 }
 
 html, body, #app {
-  background: #ccc;
+  background: #e5e5e5;
   height: 100%;
   width: 100%;
   margin: 0;
@@ -58,12 +58,20 @@ body {
 
 .regexp-panel {
   --flags-height: 2rem;
+}
+
+.regexp-panel .textarea {
   height: calc((100% - var(--label-height)) - var(--flags-height));
 }
 
 .regexp-panel .flags {
-  background: pink;
+  display: flex;
+  align-items: center;
   height: var(--flags-height);
+}
+
+.flags label {
+  margin-right: 0.5em;
 }
 
 .match {

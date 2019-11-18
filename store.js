@@ -2,8 +2,8 @@ const initialState = {
   global: true,
   ignoreCase: false,
   multiline: false,
-  regExpString: "[aeiou]",
-  testString: "bun lettuce tomato onion bacon cheese patty lettuce bun"
+  regExpString: "[a-z]{4,}",
+  testString: "This is a string that will be highlighted when your regular expression matches something."
 };
 
 let state = initialState;

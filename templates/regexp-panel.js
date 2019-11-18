@@ -39,6 +39,7 @@ export const regExpPanel = ({ state, setState, handler }) => {
         class="textarea"
         @keyup=${handler}
         @change=${handler}
+        spellcheck="false"
       >
 ${state.regExpString}</textarea
       >

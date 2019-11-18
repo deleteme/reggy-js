@@ -25,6 +25,7 @@ export const app = ({ state, setState }) => {
           class="textarea"
           @keyup=${handler}
           @change=${handler}
+          spellcheck="false"
         >
 ${state.testString}</textarea
         >
