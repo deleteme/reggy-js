@@ -10,18 +10,15 @@ export const testStringPanel = ({ state, setState, handler }) => {
           name="testString"
           id="test-string"
           class="textarea"
-          @keydown=${e => {
-    const target = e.target;
-    requestAnimationFrame(() => {
-          console.log(target.value);
-    handler(e);
-
-    });
-  }}
+          @keydown=${({ target }) => {
+            requestAnimationFrame(() => {
+              // the event target value is set by the time this is called
+              handler({ target });
+            });
+          }}
           @change=${handler}
           spellcheck="false"
-        >${state.testString}</textarea
-      >
+        >${state.testString}</textarea>
       </section>
       <section class="panel preview-panel">
         <label class="label">Preview</label>
