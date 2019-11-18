@@ -42,11 +42,11 @@ export const regExpPanel = ({ state, setState, handler }) => {
       >
 ${state.regExpString}</textarea
       >
-    </section>
     ${flags({ state, setState, flags: [
       { name: "global", label: "Global" },
       { name: "ignoreCase", label: "Ignore Case" },
       { name: "multiline", label: "Multiline" },
     ] })}
+    </section>
   `;
 };

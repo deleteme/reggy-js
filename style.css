@@ -1,4 +1,10 @@
+html, body {
+  background: pink;
+  height: 100%;
+  width: 100%;
+}
 body {
+  background: blue;
   font-family: helvetica, arial, sans-serif;
   margin: 0;
   padding: 1rem;
@@ -23,7 +29,14 @@ h1 {
   color: #373fff;
 }
 
+#app {
+  background: red;
+  height: 100%;
+  width: 100%;
+}
+
 .panels {
+  background: purple;
   display: flex-row;
   justify-content: space-between;
   height: 100%;
@@ -49,8 +62,8 @@ h1 {
 }
 
 .match {
-  color: blue;
-  text-decoration: underline;
+  background: blue;
+  color: yellow;
 }
 
 .preview {
