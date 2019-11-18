@@ -13,7 +13,7 @@ const flag = ({ state, setState, field }) => {
       .checked=${state[name]}
     />
     <label for="${name}">
-      ${label}
+      <small>${label}</small>
     </label>
   `;
 };
