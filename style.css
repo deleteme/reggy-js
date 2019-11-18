@@ -33,6 +33,14 @@ body {
 .panel {
   --label-height: 2rem;
   height: calc(100% / 3);
+  position: relative;
+}
+
+.panel .panel {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background: red;
 }
 
 .label {
@@ -44,6 +52,7 @@ body {
 .textarea,
 .preview {
   font-size: 1.5rem;
+  font-size: calc(100vw/20);
   height: calc(100% - var(--label-height));
   width: 100%;
   border: 2px solid #ccc;
@@ -72,6 +81,14 @@ body {
 
 .flags label {
   margin-right: 0.5em;
+}
+
+.preview-panel {
+  z-index: 0;
+}
+
+.test-string-panel {
+  z-index: 1;
 }
 
 .match {
