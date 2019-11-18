@@ -40,7 +40,6 @@ body {
   height: 100%;
   width: 100%;
   position: absolute;
-  background: red;
 }
 
 .label {
@@ -87,8 +86,17 @@ body {
   z-index: 0;
 }
 
+.preview-panel label {
+  opacity: 0;
+}
+
 .test-string-panel {
   z-index: 1;
+}
+
+.test-string-panel .textarea {
+  background: transparent;
+  color: transparent;
 }
 
 .match {
@@ -97,5 +105,6 @@ body {
 }
 
 .preview {
+  background: white;
   white-space: normal;
 }

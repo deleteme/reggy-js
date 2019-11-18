@@ -13,9 +13,8 @@ export const testStringPanel = ({ state, setState, handler }) => {
           @keyup=${handler}
           @change=${handler}
           spellcheck="false"
-        >
-  ${state.testString}</textarea
-        >
+        >${state.testString}</textarea
+      >
       </section>
       <section class="panel preview-panel">
         <label class="label">Preview</label>
