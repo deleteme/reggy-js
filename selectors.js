@@ -1,4 +1,4 @@
-import { createSelector, createStructuredSelector } from "../packages.js";
+import { createSelector, createStructuredSelector } from "./packages.js";
 import { makeClassMap } from "./lib/make-class-map.js";
 
 const classMap = makeClassMap("");
