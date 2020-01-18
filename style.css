@@ -123,5 +123,5 @@ body {
 
 .preview {
   background: white;
-  white-space: normal;
+  white-space: pre-wrap;
 }
