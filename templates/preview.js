@@ -1,6 +1,13 @@
 import { html, unsafeHTML } from "../packages.js";
 import { getRegExp, getMatch } from "../selectors.js";
 
+const addLineBreaks = string => {
+  return string.replace(
+    /\n/g,
+    `<span class="break-sign"></span><br class="break" />`
+  );
+};
+
 export const preview = ({ state }) => {
   let content = "";
   const regexp = getRegExp(state);
@@ -13,12 +20,13 @@ export const preview = ({ state }) => {
         regexp,
         `<span class="match">$&</span>`
       );
-      content = unsafeHTML(formatted);
+      content = unsafeHTML(addLineBreaks(formatted));
     } else {
-      content = state.testString;
+      content = addLineBreaks(state.testString);
     }
   } else {
     content = unsafeHTML(`<span class="syntax-error">${regexp}</span>`);
   }
+  // prettier-ignore
   return html`${content}`;
 };
