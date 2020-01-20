@@ -115,6 +115,7 @@ body {
   color: yellow;
 }
 
+/*.break-sign { display: none; }*/
 /* br tags cannot have ::after, so use this instead */
 .break-sign::after {
   content: '$';

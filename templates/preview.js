@@ -22,7 +22,7 @@ export const preview = ({ state }) => {
       );
       content = unsafeHTML(addLineBreaks(formatted));
     } else {
-      content = addLineBreaks(state.testString);
+      content = unsafeHTML(addLineBreaks(state.testString));
     }
   } else {
     content = unsafeHTML(`<span class="syntax-error">${regexp}</span>`);
