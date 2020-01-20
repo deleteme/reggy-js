@@ -18,6 +18,7 @@ export const getRegExp = createSelector(
   state => state.regExpString,
   getFlagsString,
   (regExpString, flags) => {
+    if (regExpString.length === 0) return null;
     try {
       return new RegExp(regExpString, flags);
     } catch (error) {
