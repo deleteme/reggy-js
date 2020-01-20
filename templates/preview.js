@@ -1,32 +1,27 @@
 import { html, unsafeHTML } from "../packages.js";
 import { getRegExp, getMatch } from "../selectors.js";
 
-const addLineBreaks = string => {
-  return string.replace(
-    /\n/g,
-    `<span class="break-sign"></span><br class="break" />`
-  );
-};
+const addLineBreaks = string =>
+  string.replace(/\n/g, `<span class="break-sign"></span><br class="break" />`);
 
 export const preview = ({ state }) => {
-  let content = "";
+  let content = state.testString;
   const regexp = getRegExp(state);
   console.log(regexp);
   if (regexp instanceof RegExp) {
     const match = getMatch(state);
     console.log("match:", match);
     if (match) {
-      const formatted = state.testString.replace(
+      content = state.testString.replace(
         regexp,
         `<span class="match">$&</span>`
       );
-      content = unsafeHTML(addLineBreaks(formatted));
-    } else {
-      content = unsafeHTML(addLineBreaks(state.testString));
     }
   } else {
-    content = unsafeHTML(`<span class="syntax-error">${regexp}</span>`);
+    content = `<span class="syntax-error">${regexp}</span>`;
   }
+  content = addLineBreaks(content);
+  content = unsafeHTML(content);
   // prettier-ignore
   return html`${content}`;
 };
