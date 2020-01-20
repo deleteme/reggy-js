@@ -28,12 +28,10 @@ const format = (content, state) => {
   if (regexp instanceof RegExp) {
     const match = getMatch(state)
     if (content.length > 0 && match) {
-      console.log(match);
       const replacements = [];
       let i = 0;
       let lastOffset = 0;
       content = content.replace(regexp, function(m){
-        console.log(arguments);
         const argsLength = arguments.length;
         const offset = arguments[argsLength - 2];
         const head = content.slice(lastOffset, offset);
