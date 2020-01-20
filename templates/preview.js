@@ -1,4 +1,4 @@
-import { html, unsafeHTML } from "../packages.js";
+import { html } from "../packages.js";
 import { getRegExp, getMatch } from "../selectors.js";
 
 // https://stackoverflow.com/questions/5499078/fastest-method-to-escape-html-tags-as-html-entities
@@ -8,27 +8,62 @@ const escapeHTML = html => {
   return escapeElement.innerHTML;
 };
 
-const addLineBreaks = string =>
-  string.replace(/\n/g, `<span class="break-sign"></span><br class="break" />`);
+// prettier-ignore
+const breakSign = html`<span class="break-sign"></span><br class="break" />`;
+
+const newLine = /\n/g;
+
+const addLineBreakHTML = string => {
+  return newLine.test(string)
+    ? string.split(newLine).map(
+        (line, i) =>
+          // prettier-ignore
+          html`${i > 0 ? breakSign : ""}${line}`
+      )
+    : string;
+};
 
 const format = (content, state) => {
   const regexp = getRegExp(state);
   if (regexp instanceof RegExp) {
-    if (content.length > 0 && getMatch(state)) {
-      content = content.replace(regexp, `<span class="match">$&</span>`);
+    const match = getMatch(state)
+    if (content.length > 0 && match) {
+      console.log(match);
+      const replacements = [];
+      let i = 0;
+      let lastOffset = 0;
+      content = content.replace(regexp, function(m){
+        console.log(arguments);
+        const argsLength = arguments.length;
+        const offset = arguments[argsLength - 2];
+        const head = content.slice(lastOffset, offset);
+        replacements.push(
+          html`${addLineBreakHTML(head)}`,
+          html`<span class="match">${addLineBreakHTML(m)}</span>`
+        );
+        // if there's a tail, add it
+        const isLastReplacement = i === match.length - 1;
+        if (isLastReplacement) {
+          const tail = content.slice(offset + m.length);
+          if (tail) replacements.push(html`${addLineBreakHTML(tail)}`);
+        }
+        lastOffset = offset + m.length;
+        i += 1;
+        return '';
+      });
+      return replacements;
     }
   } else if (regexp instanceof Error) {
-    content = `<span class="syntax-error">${regexp}</span>`;
+    return html`<span class="syntax-error">${regexp}</span>`;
   }
 
+  content = addLineBreakHTML(content);
   return content;
 };
 
 export const preview = ({ state }) => {
   let content = escapeHTML(state.testString);
   content = format(content, state);
-  content = addLineBreaks(content);
-  content = unsafeHTML(content);
   // prettier-ignore
-  return html`${content}`;
+  return html`<div class="preview">${content}</div>`;
 };

@@ -42,7 +42,7 @@ ${state.testString}</textarea
       </section>
       <section class="panel preview-panel">
         <label class="label">Preview</label>
-        <pre class="preview">${preview({ state })}</pre>
+        ${preview({ state })}
       </section>
     </section>
   `;
