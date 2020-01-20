@@ -62,17 +62,25 @@ body {
 .preview {
   font-family: monospace;
   font-size: 1.5rem;
-  # font-size: calc(100vw/20);
+  /* font-size: calc(100vw/20); */
   height: calc(100% - var(--label-height));
+  line-height: calc(1em + 2px);
+  line-height: 26px;
   width: 100%;
   border: 2px solid #ccc;
+  border-radius: 3px;
   padding: 0.5em;
   margin: 0;
   width: 100%;
+
 }
 
 .textarea:focus {
   border-color: blue;
+  box-shadow: 0 0 0 3px rgba(0, 0, 255, 0.4);
+  outline-color: rgba(0, 0, 255, 0);
+  outline-style: none;
+  outline-width: 0;
 }
 
 .regexp-panel {
@@ -112,6 +120,7 @@ body {
 
 .match {
   background: magenta;
+  border-radius: 2px;
   color: yellow;
 }
 
