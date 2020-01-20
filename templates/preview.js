@@ -11,24 +11,22 @@ const escapeHTML = html => {
 const addLineBreaks = string =>
   string.replace(/\n/g, `<span class="break-sign"></span><br class="break" />`);
 
-export const preview = ({ state }) => {
-  console.log("state", state);
-  let content = escapeHTML(state.testString);
+const format = (content, state) => {
   const regexp = getRegExp(state);
-  console.log(regexp);
-  if (regexp !== null) {
-    if (regexp instanceof RegExp) {
-      if (content.length > 0) {
-        const match = getMatch(state);
-        console.log("match:", match);
-        if (match) {
-          content = content.replace(regexp, `<span class="match">$&</span>`);
-        }
-      }
-    } else {
-      content = `<span class="syntax-error">${regexp}</span>`;
+  if (regexp instanceof RegExp) {
+    if (content.length > 0 && getMatch(state)) {
+      content = content.replace(regexp, `<span class="match">$&</span>`);
     }
+  } else if (regexp instanceof Error) {
+    content = `<span class="syntax-error">${regexp}</span>`;
   }
+
+  return content;
+};
+
+export const preview = ({ state }) => {
+  let content = escapeHTML(state.testString);
+  content = format(content, state);
   content = addLineBreaks(content);
   content = unsafeHTML(content);
   // prettier-ignore
