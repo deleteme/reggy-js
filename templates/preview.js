@@ -28,23 +28,23 @@ const format = (content, state) => {
   if (regexp instanceof RegExp) {
     const match = getMatch(state)
     if (content.length > 0 && match) {
+      console.log('match', match);
       const replacements = [];
       let i = 0;
       let lastOffset = 0;
+      // the function formats and collects each match into replacements
       content = content.replace(regexp, function(m){
         const argsLength = arguments.length;
         const offset = arguments[argsLength - 2];
         const head = content.slice(lastOffset, offset);
+        replacements.pop();// remove the tail
         replacements.push(
           html`${addLineBreakHTML(head)}`,
           html`<span class="match">${addLineBreakHTML(m)}</span>`
         );
         // if there's a tail, add it
-        const isLastReplacement = i === match.length - 1;
-        if (isLastReplacement) {
-          const tail = content.slice(offset + m.length);
-          if (tail) replacements.push(html`${addLineBreakHTML(tail)}`);
-        }
+        const tail = content.slice(offset + m.length);
+        if (tail) replacements.push(html`${addLineBreakHTML(tail)}`);
         lastOffset = offset + m.length;
         i += 1;
         return '';
