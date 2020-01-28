@@ -32,19 +32,27 @@ const format = (content, state) => {
       const replacements = [];
       let i = 0;
       let lastOffset = 0;
+      let hasTailInReplacements = false;
       // the function formats and collects each match into replacements
       content = content.replace(regexp, function replace(m) {
         const argsLength = arguments.length;
         const offset = arguments[argsLength - 2];
         const head = content.slice(lastOffset, offset);
-        replacements.pop();// remove the tail
+        const needsTailInReplacements = match.length - i < 3;
+        if (hasTailInReplacements) replacements.pop();// remove the tail
         replacements.push(
           html`${addLineBreakHTML(head)}`,
           html`<span class="match">${addLineBreakHTML(m)}</span>`
         );
-        // if there's a tail, add it
-        const tail = content.slice(offset + m.length);
-        if (tail) replacements.push(html`${addLineBreakHTML(tail)}`);
+        // if approaching the end of the matches, add the tail
+        if (needsTailInReplacements) {
+          // if there's a tail, add it
+          const tail = content.slice(offset + m.length);
+          if (tail) {
+            replacements.push(html`${addLineBreakHTML(tail)}`);
+            hasTailInReplacements = true;
+          }
+        }
         lastOffset = offset + m.length;
         i += 1;
         return '';
