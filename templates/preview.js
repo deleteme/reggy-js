@@ -33,7 +33,7 @@ const format = (content, state) => {
       let i = 0;
       let lastOffset = 0;
       // the function formats and collects each match into replacements
-      content = content.replace(regexp, function(m){
+      content = content.replace(regexp, function replace(m) {
         const argsLength = arguments.length;
         const offset = arguments[argsLength - 2];
         const head = content.slice(lastOffset, offset);
