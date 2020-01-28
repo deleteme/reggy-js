@@ -21,6 +21,9 @@ export const testStringPanel = ({ state, setState, handler }) => {
       handler({ target });
     });
   };
+  const handleScroll = (e) => {
+    setState({ testStringPanelScrollTop: e.target.scrollTop });
+  };
   return html`
     <section class="panel test-string-panel-input-mask">
       <section class="panel test-string-panel">
@@ -35,10 +38,9 @@ export const testStringPanel = ({ state, setState, handler }) => {
           id="test-string"
           class="textarea"
           @input=${handleTestString}
+          @scroll=${handleScroll}
           spellcheck="false"
-        >
-${state.testString}</textarea
-        >
+        >${state.testString}</textarea>
       </section>
       <section class="panel preview-panel">
         <label class="label">Preview</label>

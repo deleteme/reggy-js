@@ -134,4 +134,19 @@ body {
 .preview {
   background: white;
   white-space: pre-wrap;
+  overflow: scroll;
+  overflow-anchor: auto;
+  overflow-wrap: break-word;
+  vertical-align: text-bottom;
+  appearance: textarea;
+  -moz-appearance: textarea;
+  -webkit-appearance: textarea;
+
+  /* Hide scrollbar */
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.preview::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
 }
