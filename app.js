@@ -25,7 +25,8 @@ const measure = () => {
 
 const renderApp = ({ state, setState }) => {
   render(app({ state, setState }), document.getElementById("app"));
-  measure();
 };
 
 subscribe(renderApp);
+
+measure();
