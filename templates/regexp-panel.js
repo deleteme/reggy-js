@@ -1,6 +1,6 @@
 import { html, repeat } from "../packages.js";
 
-const flag = ({ state, setState, field }) => {
+const flag = ({ state, dispatch, field }) => {
   const { name, label } = field;
   return html`
     <input
@@ -8,7 +8,7 @@ const flag = ({ state, setState, field }) => {
       id=${name}
       name=${name}
       @change=${e => {
-        setState({ [name]: e.target.checked });
+        dispatch({ type: 'INPUT_CHANGED', name, value: e.target.checked });
       }}
       .checked=${state[name]}
     />
@@ -18,18 +18,18 @@ const flag = ({ state, setState, field }) => {
   `;
 };
 
-const flags = ({ state, setState, flags }) => {
+const flags = ({ state, dispatch, flags }) => {
   return html`<div class="flags">${repeat(
     flags,
     ({ name }) => name,
     (field, index) =>
       html`
-        ${flag({ state, setState, field })}
+        ${flag({ state, dispatch, field })}
       `
   )}</div>`;
 };
 
-export const regExpPanel = ({ state, setState, handler }) => {
+export const regExpPanel = ({ state, dispatch, handler }) => {
   return html`
     <section class="panel regexp-panel">
       <label class="label" for="regexp-string">Regular Expression</label>
@@ -43,7 +43,7 @@ export const regExpPanel = ({ state, setState, handler }) => {
       >
 ${state.regExpString}</textarea
       >
-    ${flags({ state, setState, flags: [
+    ${flags({ state, dispatch, flags: [
       { name: "global", label: "Global" },
       { name: "ignoreCase", label: "Ignore Case" },
       { name: "multiline", label: "Multiline" },

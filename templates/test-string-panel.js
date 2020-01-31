@@ -13,7 +13,7 @@ const renderMatchCount = ({ state }) => {
     : "";
 };
 
-export const testStringPanel = ({ state, setState, handler }) => {
+export const testStringPanel = ({ state, dispatch, handler }) => {
   const handleTestString = ({ target }) => {
     requestAnimationFrame(() => {
       // the event target value is set
@@ -22,7 +22,11 @@ export const testStringPanel = ({ state, setState, handler }) => {
     });
   };
   const handleScroll = (e) => {
-    setState({ testStringPanelScrollTop: e.target.scrollTop });
+    dispatch({
+      type: 'INPUT_CHANGED',
+      name: 'testStringPanelScrollTop',
+      value: e.target.scrollTop
+    });
   };
   return html`
     <section class="panel test-string-panel-input-mask">

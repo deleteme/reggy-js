@@ -4,10 +4,10 @@ import { regExpPanel } from "./regexp-panel.js";
 import { testStringPanel } from "./test-string-panel.js";
 import { classMap } from '../lib/class-map.js';
 
-export const app = ({ state, setState }) => {
+export const app = ({ state, dispatch }) => {
   const handler = e => {
     const { value, name } = e.target;
-    setState({ [name]: value });
+    dispatch({ type: 'INPUT_CHANGED', name, value });
   };
   const regExp = getRegExp(state);
   return html`
@@ -19,8 +19,8 @@ export const app = ({ state, setState }) => {
         })
       }"
     >
-      ${regExpPanel({ state, setState, handler })}
-      ${testStringPanel({ state, setState, handler })}
+      ${regExpPanel({ state, dispatch, handler })}
+      ${testStringPanel({ state, dispatch, handler })}
     </div>
   `;
 };
