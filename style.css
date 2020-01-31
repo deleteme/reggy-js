@@ -2,7 +2,9 @@
   box-sizing: border-box;
 }
 
-html, body, #app {
+html,
+body,
+#app {
   background: #e5e5e5;
   height: 100%;
   width: 100%;
@@ -72,7 +74,6 @@ body {
   padding: 0.5em;
   margin: 0;
   width: 100%;
-
 }
 
 .textarea:focus {
@@ -127,7 +128,7 @@ body {
 /*.break-sign { display: none; }*/
 /* br tags cannot have ::after, so use this instead */
 .break-sign::after {
-  content: '$';
+  content: "$";
   color: #ccc;
 }
 
@@ -143,10 +144,10 @@ body {
   -webkit-appearance: textarea;
 
   /* Hide scrollbar */
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
 }
 
 .preview::-webkit-scrollbar {
-  display: none;  /* Safari and Chrome */
+  display: none; /* Safari and Chrome */
 }
