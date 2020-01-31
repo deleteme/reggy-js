@@ -1,5 +1,5 @@
 import { render } from "./packages.js";
-import { store } from "./store.js";
+import { getState, subscribe, dispatch } from "./store.js";
 import { app } from "./templates/app.js";
 
 const add = (a, b) => a + b;
@@ -33,9 +33,9 @@ const renderApp = ({ state, dispatch }) => {
 };
 
 const handleStore = () =>
-  renderApp({ state: store.getState(), dispatch: store.dispatch });
+  renderApp({ state: getState(), dispatch });
 
-store.subscribe(handleStore);
+subscribe(handleStore);
 
 handleStore();
 

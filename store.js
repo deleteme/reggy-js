@@ -1,4 +1,22 @@
-import { createStore } from "./packages.js";
+const createStoreWorker = (path, reducer, initialState) => {
+  const worker = new Worker(path);
+  let state = initialState;
+  const subscribers = new Set();
+  const getState = () => state;
+  const reduceAndNotify = action => {
+    state = reducer(state, action);
+    for (let callback of subscribers) callback();
+  };
+  const dispatch = (action, isAsync = true) => {
+    if (isAsync) worker.postMessage(action);
+    else reduceAndNotify(action);
+  };
+  const subscribe = callback => subscribers.add(callback);
+  worker.addEventListener("message", function handleWorkerMessage(e) {
+    reduceAndNotify(e.data);
+  });
+  return { dispatch, getState, subscribe };
+};
 
 const initialState = {
   global: true,
@@ -9,11 +27,10 @@ const initialState = {
     "This is a string that will be highlighted when your regular expression matches something.",
   testStringPanelScrollTop: 0
 };
-
-let state = initialState;
-
-const rootReducer = (state, action) => {
+const reducer = (state, action) => {
   switch (action.type) {
+    case "PUBLISH":
+      return { ...state, ...action.state };
     case "INPUT_CHANGED":
       return { ...state, [action.name]: action.value };
     default:
@@ -21,8 +38,28 @@ const rootReducer = (state, action) => {
   }
 };
 
-export const store = createStore(
-  rootReducer,
-  initialState,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+export const { dispatch, getState, subscribe } = createStoreWorker(
+  "/store-worker.js",
+  reducer,
+  initialState
 );
+
+const MAIN_THREAD_FIELDS = new Set(["testStringPanelScrollTop"]);
+
+const WORKER_FIELDS = new Set(
+  Object.keys(initialState).filter(name => !MAIN_THREAD_FIELDS.has(name))
+);
+
+// send worker fields
+dispatch({
+  type: "INIT",
+  initialState: Object.entries(initialState).reduce(
+    (storeWorkerInitialState, [name, value]) => {
+      if (WORKER_FIELDS.has(name)) {
+        storeWorkerInitialState[name] = value;
+      }
+      return storeWorkerInitialState;
+    },
+    {}
+  )
+});

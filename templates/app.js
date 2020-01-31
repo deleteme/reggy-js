@@ -5,6 +5,10 @@ import { testStringPanel } from "./test-string-panel.js";
 import { classMap } from '../lib/class-map.js';
 
 export const app = ({ state, dispatch }) => {
+  if (state === null) {
+    return html`<span>loading</span>`;
+  }
+  console.log('state', state);
   const handler = e => {
     const { value, name } = e.target;
     dispatch({ type: 'INPUT_CHANGED', name, value });

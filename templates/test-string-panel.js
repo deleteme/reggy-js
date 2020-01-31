@@ -26,7 +26,7 @@ export const testStringPanel = ({ state, dispatch, handler }) => {
       type: 'INPUT_CHANGED',
       name: 'testStringPanelScrollTop',
       value: e.target.scrollTop
-    });
+    }, false);
   };
   return html`
     <section class="panel test-string-panel-input-mask">
