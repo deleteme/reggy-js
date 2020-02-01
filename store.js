@@ -8,8 +8,11 @@ const createStoreWorker = (path, reducer, initialState) => {
     for (let callback of subscribers) callback();
   };
   const dispatch = (action, isAsync = true) => {
-    if (isAsync) worker.postMessage(action);
-    else reduceAndNotify(action);
+    if (isAsync) {
+      worker.postMessage(action);
+    } else {
+      reduceAndNotify(action);
+    }
   };
   const subscribe = callback => subscribers.add(callback);
   worker.addEventListener("message", function handleWorkerMessage(e) {
