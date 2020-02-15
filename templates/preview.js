@@ -1,6 +1,11 @@
 import { html, createSelector, asyncAppend, guard } from "../packages.js";
 import { getRegExp, getMatch } from "../selectors.js";
 
+const log = (...values) => {
+  setTimeout(() => {
+    console.log(...values);
+  }, 0);
+};
 // https://stackoverflow.com/questions/5499078/fastest-method-to-escape-html-tags-as-html-entities
 const escapeElement = document.createElement("textarea");
 const escapeHTML = html => {
@@ -14,7 +19,8 @@ const getContent = createSelector(
 );
 
 // prettier-ignore
-const breakSign = html`<span class="break-sign"></span><br class="break" />`;
+const _break = html`<br class="break" />`;
+const breakSign = html`<span class="break-sign"></span>${_break}`;
 
 const newLine = /\n/g;
 
@@ -23,7 +29,7 @@ const addLineBreakHTML = string => {
     ? string.split(newLine).map(
         (line, i) =>
           // prettier-ignore
-          html`${i > 0 ? breakSign : ""}${line}`
+          html`${i > 0 ? _break : ""}${line}`
       )
     : string;
 };
@@ -43,7 +49,7 @@ const memoizedFormat = createSelector(
   function format(content, regexp, match) {
     if (regexp instanceof RegExp) {
       if (content.length > 0 && match) {
-        console.log("match", match);
+        log("match", match);
         const replacements = [];
         let i = 0;
         let lastOffset = 0;
@@ -87,6 +93,7 @@ const memoizedFormat = createSelector(
 );
 
 const nextFrame = () => {
+  log('next frame');
   return new Promise(requestAnimationFrame);
 };
 
@@ -98,16 +105,15 @@ async function* renderMatchesAsync(replacementInstructions) {
   for (let instruction of replacementInstructions) {
     i += 1;
     if (i === max) {
-      console.log('yield ', i, 'templates');
+      log('yield ', i, 'templates');
       yield bucket;
-      await nextFrame();
-      console.log('next frame');
+      //await nextFrame();
       bucket = [];
       i = 0;
     }
     bucket.push(callTemplate(instruction));
   }
-  console.log('yield remaining templates with a bucket of length', bucket.length);
+  log('yield remaining templates with a bucket of length', bucket.length);
   yield bucket;
 }
 
