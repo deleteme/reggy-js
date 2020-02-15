@@ -2,9 +2,11 @@ import { html, createSelector, asyncAppend, guard } from "../packages.js";
 import { getRegExp, getMatch } from "../selectors.js";
 
 const log = (...values) => {
+/*
   setTimeout(() => {
     console.log(...values);
   }, 0);
+*/
 };
 // https://stackoverflow.com/questions/5499078/fastest-method-to-escape-html-tags-as-html-entities
 const escapeElement = document.createElement("textarea");
@@ -13,10 +15,7 @@ const escapeHTML = html => {
   return escapeElement.innerHTML;
 };
 
-const getContent = createSelector(
-  state => state.testString,
-  escapeHTML
-);
+const getContent = state => state.testString;
 
 // prettier-ignore
 const _break = html`<br class="break" />`;

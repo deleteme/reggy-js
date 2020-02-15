@@ -49,6 +49,8 @@ const reapplyScrollTopAfterPaste = async () => {
       // sometimes it doesn't stick
       if (!isScrollTopOff()) {
         dispatch({ type: "PASTE", didRecentlyPaste: false }, false);
+      } else {
+        console.log("retrying to apply scroll after paste.");
       }
     }
   }
