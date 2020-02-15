@@ -127,7 +127,8 @@ export const preview = ({ state }) => {
     >${guard(
         [content, instructions],
         () => instructions
-          ? asyncAppend(renderMatchesAsync(instructions))
+          ? instructions.map(callTemplate)
+          //? asyncAppend(renderMatchesAsync(instructions))
           : content
       )}
     </div></div>`;
