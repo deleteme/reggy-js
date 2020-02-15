@@ -56,8 +56,13 @@ body {
   line-height: var(--label-height);
 }
 
+.test-string-panel-input-mask {
+  --padding: 0.5em;
+}
+
 .textarea {
   caret-color: black;
+  padding: var(--padding);
 }
 
 .textarea,
@@ -71,7 +76,6 @@ body {
   width: 100%;
   border: 2px solid #ccc;
   border-radius: 3px;
-  padding: 0.5em;
   margin: 0;
   width: 100%;
 }
@@ -135,14 +139,20 @@ body {
 .preview {
   background: white;
   white-space: pre-wrap;
-  overflow: scroll;
-  overflow-anchor: auto;
-  overflow-wrap: break-word;
   vertical-align: text-bottom;
   appearance: textarea;
   -moz-appearance: textarea;
   -webkit-appearance: textarea;
 
+}
+
+.preview-interior {
+  height: calc(100% - (var(--padding) * 2));
+  width: calc(100% - (var(--padding) * 2));
+  margin: var(--padding);
+  overflow: scroll;
+  overflow-anchor: auto;
+  overflow-wrap: break-word;
   /* Hide scrollbar */
   -ms-overflow-style: none; /* Internet Explorer 10+ */
   scrollbar-width: none; /* Firefox */
@@ -150,4 +160,17 @@ body {
 
 .preview::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
+}
+
+.debug .panel {
+  width: 50%;
+}
+
+.debug .preview-panel {
+  right: 0;
+}
+
+.debug .textarea {
+  background: inherit;
+  color: inherit;
 }

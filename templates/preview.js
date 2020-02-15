@@ -121,15 +121,15 @@ export const preview = ({ state }) => {
   const { content, instructions } = memoizedFormat(state);
   // prettier-ignore
   return html`
-    <div
-      class="preview"
+    <div class="preview"><div
+      class="preview-interior"
       .scrollTop=${state.testStringPanelScrollTop}
     >${guard(
         [content, instructions],
         () => instructions
           ? asyncAppend(renderMatchesAsync(instructions))
           : content
-      )
-    }</div>`;
+      )}
+    </div></div>`;
 };
 
