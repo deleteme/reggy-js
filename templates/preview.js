@@ -50,37 +50,37 @@ const memoizedFormat = createSelector(
     if (regexp instanceof RegExp) {
       if (content.length > 0 && match) {
         log("match", match);
-        const replacements = [];
+        const instructions = [];
         let i = 0;
         let lastOffset = 0;
-        let hasTailInReplacements = false;
-        // the function formats and collects each match into replacements
+        let hasTailInInstructions = false;
+        // the function formats and collects each match into instructions
         content = content.replace(regexp, function replace(m) {
           const argsLength = arguments.length;
           const offset = arguments[argsLength - 2];
           const head = content.slice(lastOffset, offset);
-          const needsTailInReplacements = match.length - i < 3;
-          if (hasTailInReplacements) replacements.pop(); // remove the tail
-          replacements.push(
+          const needsTailInInstructions = match.length - i < 3;
+          if (hasTailInInstructions) instructions.pop(); // remove the tail
+          instructions.push(
             instruction(renderHead, head),
             instruction(renderMatch, m)
           );
           // if approaching the end of the matches, add the tail
-          if (needsTailInReplacements) {
+          if (needsTailInInstructions) {
             // if there's a tail, add it
             const tail = content.slice(offset + m.length);
             if (tail) {
-              replacements.push(
+              instructions.push(
                 instruction(renderTail, tail)
               );
-              hasTailInReplacements = true;
+              hasTailInInstructions = true;
             }
           }
           lastOffset = offset + m.length;
           i += 1;
           return "";
         });
-        return { replacements };
+        return { instructions };
       }
     } else if (regexp instanceof Error) {
       // prettier-ignore
@@ -118,16 +118,16 @@ async function* renderMatchesAsync(replacementInstructions) {
 }
 
 export const preview = ({ state }) => {
-  const { content, replacements } = memoizedFormat(state);
+  const { content, instructions } = memoizedFormat(state);
   // prettier-ignore
   return html`
     <div
       class="preview"
       .scrollTop=${state.testStringPanelScrollTop}
     >${guard(
-        [content, replacements],
-        () => replacements
-          ? asyncAppend(renderMatchesAsync(replacements))
+        [content, instructions],
+        () => instructions
+          ? asyncAppend(renderMatchesAsync(instructions))
           : content
       )
     }</div>`;
