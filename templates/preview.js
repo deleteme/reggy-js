@@ -123,6 +123,7 @@ export const preview = ({ state }) => {
   return html`
     <div class="preview"><div
       class="preview-interior"
+      id="preview-interior"
       .scrollTop=${state.testStringPanelScrollTop}
     >${guard(
         [content, instructions],

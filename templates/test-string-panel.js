@@ -21,12 +21,19 @@ export const testStringPanel = ({ state, dispatch, handler }) => {
       handler({ target });
     });
   };
-  const handleScroll = (e) => {
+  const handleScrollTop = element => {
     dispatch({
       type: 'INPUT_CHANGED',
       name: 'testStringPanelScrollTop',
-      value: e.target.scrollTop
+      value: element.scrollTop
     }, false);
+  };
+  const handleScroll = (e) => {
+    handleScrollTop(e.target);
+  };
+  const handlePaste = (e) => {
+    handleScrollTop(e.target);
+    dispatch({ type: 'PASTE', didRecentlyPaste: true }, false);
   };
   return html`
     <section class="panel test-string-panel-input-mask debug">
@@ -43,6 +50,7 @@ export const testStringPanel = ({ state, dispatch, handler }) => {
           class="textarea"
           @input=${handleTestString}
           @scroll=${handleScroll}
+          @paste=${handlePaste}
           spellcheck="false"
         >${state.testString}</textarea>
       </section>

@@ -32,10 +32,29 @@ const renderApp = ({ state, dispatch }) => {
   render(app({ state, dispatch }), document.getElementById("app"));
 };
 
-const handleStore = () =>
-  renderApp({ state: getState(), dispatch });
+const handleStore = () => renderApp({ state: getState(), dispatch });
 
 subscribe(handleStore);
+
+const tick = () => new Promise(setTimeout);
+
+const reapplyScrollTopAfterPaste = async () => {
+  if (getState().didRecentlyPaste) {
+    const preview = document.getElementById("preview-interior");
+    const isScrollTopOff = () =>
+      preview.scrollTop !== getState().testStringPanelScrollTop;
+    if (isScrollTopOff()) {
+      await tick();
+      preview.scrollTop = getState().testStringPanelScrollTop;
+      // sometimes it doesn't stick
+      if (!isScrollTopOff()) {
+        dispatch({ type: "PASTE", didRecentlyPaste: false }, false);
+      }
+    }
+  }
+};
+
+subscribe(reapplyScrollTopAfterPaste);
 
 handleStore();
 
