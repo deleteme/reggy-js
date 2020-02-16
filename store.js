@@ -24,6 +24,7 @@ const createStoreWorker = (path, reducer, initialState) => {
 const initialState = {
   global: true,
   ignoreCase: false,
+  instructions: null,
   multiline: false,
   regExpString: "[a-z]{4,}",
   testString:

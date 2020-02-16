@@ -39,7 +39,12 @@ const renderTail = renderHead;
 // prettier-ignore
 const renderMatch = m => html`<span class="match">${addLineBreakHTML(m)}</span>`;
 const instruction = (template, string) => ({ template, string });
-const callTemplate = ({ template, string }) => template(string);
+const templateMap = [renderHead, renderMatch, renderTail];
+const callTemplate = ([templateType, string]) => {
+  const template = templateMap[templateType];
+  return template(string);
+}
+
 
 const memoizedFormat = createSelector(
   getContent,
@@ -47,6 +52,7 @@ const memoizedFormat = createSelector(
   getMatch,
   function format(content, regexp, match) {
     if (regexp instanceof RegExp) {
+  /*
       if (content.length > 0 && match) {
         log("match", match);
         const instructions = [];
@@ -81,6 +87,7 @@ const memoizedFormat = createSelector(
         });
         return { instructions };
       }
+  */
     } else if (regexp instanceof Error) {
       // prettier-ignore
       return { content: html`<span class="syntax-error">${regexp}</span>` };
@@ -95,6 +102,19 @@ const nextFrame = () => {
   log('next frame');
   return new Promise(requestAnimationFrame);
 };
+
+const getFallbackContent = createSelector(
+  getContent,
+  getRegExp,
+  function _getFallbackContent(content, regExp) {
+    if (regExp instanceof Error) {
+      // prettier-ignore
+      return html`<span class="syntax-error">${regExp}</span>`;
+    } else {
+      return addLineBreakHTML(content);
+    }
+  }
+);
 
 async function* renderMatchesAsync(replacementInstructions) {
   const max = 100;
@@ -117,7 +137,8 @@ async function* renderMatchesAsync(replacementInstructions) {
 }
 
 export const preview = ({ state }) => {
-  const { content, instructions } = memoizedFormat(state);
+  const fallbackContent = getFallbackContent(state);
+  const { instructions } = state;
   // prettier-ignore
   return html`
     <div class="preview"><div
@@ -125,11 +146,11 @@ export const preview = ({ state }) => {
       id="preview-interior"
       .scrollTop=${state.testStringPanelScrollTop}
     >${guard(
-        [content, instructions],
+        [fallbackContent, instructions],
         () => instructions
           ? instructions.map(callTemplate)
           //? asyncAppend(renderMatchesAsync(instructions))
-          : content
+          : fallbackContent
       )}
     </div></div>`;
 };

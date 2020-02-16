@@ -57,6 +57,9 @@ const reapplyScrollTopAfterPaste = async () => {
 };
 
 subscribe(reapplyScrollTopAfterPaste);
+subscribe(() => {
+  //console.log(getState());
+});
 
 handleStore();
 
