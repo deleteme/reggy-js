@@ -41,8 +41,6 @@ const reducer = (state, action) => {
       return { ...state, ...action.state };
     case "INPUT_CHANGED":
       return { ...state, [action.name]: action.value };
-    case "PASTE":
-      return { ...state, didRecentlyPaste: action.didRecentlyPaste };
     default:
       return state;
   }

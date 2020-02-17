@@ -26,10 +26,6 @@ export const testStringPanel = ({ state, dispatch, handler }) => {
   const handleScroll = e => {
     handleScrollTop(e.target);
   };
-  const handlePaste = e => {
-    handleScrollTop(e.target);
-    dispatch({ type: "PASTE", didRecentlyPaste: true }, false);
-  };
   // prettier-ignore
   return html`
     <section class="panel test-string-panel-input-mask debug">
@@ -46,7 +42,6 @@ export const testStringPanel = ({ state, dispatch, handler }) => {
           class="textarea"
           @input=${handler}
           @scroll=${handleScroll}
-          @paste=${handlePaste}
           spellcheck="false"
         >${state.testString}</textarea>
       </section>

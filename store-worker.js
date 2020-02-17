@@ -86,7 +86,7 @@ const getFlags = createStructuredSelector({
 
 const makeClassMap = delimiter => map => {
   return Object.entries(map)
-    .filter(([key, value]) => value)
+    .filter(([, value]) => value)
     .map(([key]) => key)
     .join(delimiter);
 };

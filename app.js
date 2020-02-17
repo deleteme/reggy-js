@@ -36,27 +36,7 @@ const handleStore = () => renderApp({ state: getState(), dispatch });
 
 subscribe(handleStore);
 
-const tick = () => new Promise(setTimeout);
-
-const reapplyScrollTopAfterPaste = async ({ dispatch, getState, action }) => {
-  if (getState().didRecentlyPaste) {
-    const preview = document.getElementById("preview-interior");
-    const isScrollTopOff = () =>
-      preview.scrollTop !== getState().testStringPanelScrollTop;
-    if (isScrollTopOff()) {
-      await tick();
-      preview.scrollTop = getState().testStringPanelScrollTop;
-      // sometimes it doesn't stick
-      if (!isScrollTopOff()) {
-        dispatch({ type: "PASTE", didRecentlyPaste: false }, false);
-      } else {
-        console.log("retrying to apply scroll after paste.");
-      }
-    }
-  }
-};
-
-const reapplyScrollTopAfterPublish = ({ dispatch, getState, action }) => {
+const reapplyScrollTopAfterPublish = ({ getState, action }) => {
   if (action.type === 'PUBLISH') {
     const preview = document.getElementById("preview-interior");
     const isScrollTopOff = preview.scrollTop !== getState().testStringPanelScrollTop;
@@ -67,9 +47,9 @@ const reapplyScrollTopAfterPublish = ({ dispatch, getState, action }) => {
 };
 
 subscribe(reapplyScrollTopAfterPublish);
-subscribe(({ action }) => {
+//subscribe(({ action }) => {
   //console.log('action', action, 'state', getState());
-});
+//});
 
 handleStore();
 
