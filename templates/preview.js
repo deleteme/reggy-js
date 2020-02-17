@@ -39,7 +39,7 @@ const addLineBreakHTML = string => {
 };
 
 // prettier-ignore
-const renderHead = head => html`${addLineBreakHTML(head)}`;
+const renderHead = head => addLineBreakHTML(head);
 const renderTail = renderHead;
 // prettier-ignore
 const renderMatch = m => html`<span class="match">${addLineBreakHTML(m)}</span>`;
