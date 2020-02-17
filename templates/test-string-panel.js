@@ -15,11 +15,7 @@ const renderMatchCount = ({ state }) => {
 
 export const testStringPanel = ({ state, dispatch, handler }) => {
   const handleTestString = ({ target }) => {
-    requestAnimationFrame(() => {
-      // the event target value is set
-      // by the time this is called
-      handler({ target });
-    });
+    handler({ target });
   };
   const handleScrollTop = element => {
     dispatch({
