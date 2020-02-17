@@ -13,9 +13,6 @@ const renderMatchCount = ({ state }) => {
 };
 
 export const testStringPanel = ({ state, dispatch, handler }) => {
-  const handleTestString = ({ target }) => {
-    handler({ target });
-  };
   const handleScrollTop = element => {
     dispatch(
       {
@@ -47,7 +44,7 @@ export const testStringPanel = ({ state, dispatch, handler }) => {
           name="testString"
           id="test-string"
           class="textarea"
-          @input=${handleTestString}
+          @input=${handler}
           @scroll=${handleScroll}
           @paste=${handlePaste}
           spellcheck="false"
