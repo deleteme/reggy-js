@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "eslint": "eslint */**.js"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0"
+  },
+  "installConfig": {
+    "pnp": true
+  }
+}
