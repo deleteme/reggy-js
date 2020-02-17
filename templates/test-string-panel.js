@@ -5,11 +5,10 @@ import { getMatch } from "../selectors.js";
 const renderMatchCount = ({ state }) => {
   const match = getMatch(state);
   return match
-    ? html`
-        <small class="match-length"
-          >${match.length} ${match.length === 1 ? "match" : "matches"}</small
-        >
-      `
+    ? // prettier-ignore
+      html`<small class="match-length">
+        ${match.length} ${match.length === 1 ? "match" : "matches"}
+      </small>`
     : "";
 };
 
@@ -18,19 +17,23 @@ export const testStringPanel = ({ state, dispatch, handler }) => {
     handler({ target });
   };
   const handleScrollTop = element => {
-    dispatch({
-      type: 'INPUT_CHANGED',
-      name: 'testStringPanelScrollTop',
-      value: element.scrollTop
-    }, false);
+    dispatch(
+      {
+        type: "INPUT_CHANGED",
+        name: "testStringPanelScrollTop",
+        value: element.scrollTop
+      },
+      false
+    );
   };
-  const handleScroll = (e) => {
+  const handleScroll = e => {
     handleScrollTop(e.target);
   };
-  const handlePaste = (e) => {
+  const handlePaste = e => {
     handleScrollTop(e.target);
-    dispatch({ type: 'PASTE', didRecentlyPaste: true }, false);
+    dispatch({ type: "PASTE", didRecentlyPaste: true }, false);
   };
+  // prettier-ignore
   return html`
     <section class="panel test-string-panel-input-mask debug">
       <section class="panel test-string-panel">
