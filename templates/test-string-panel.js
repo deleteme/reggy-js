@@ -1,4 +1,4 @@
-import { html, repeat } from "../packages.js";
+import { html } from "../packages.js";
 import { preview } from "./preview.js";
 import { getMatch } from "../selectors.js";
 

@@ -22,10 +22,8 @@ const flags = ({ state, dispatch, flags }) => {
   return html`<div class="flags">${repeat(
     flags,
     ({ name }) => name,
-    (field, index) =>
-      html`
-        ${flag({ state, dispatch, field })}
-      `
+    // prettier-ignore
+    field => html`${flag({ state, dispatch, field })}`
   )}</div>`;
 };
 
