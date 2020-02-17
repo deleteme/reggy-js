@@ -2,6 +2,10 @@
   box-sizing: border-box;
 }
 
+html {
+  font-size: 16px;
+}
+
 html,
 body,
 #app {
@@ -143,7 +147,6 @@ body {
   appearance: textarea;
   -moz-appearance: textarea;
   -webkit-appearance: textarea;
-
 }
 
 .preview-interior {

@@ -38,7 +38,7 @@ subscribe(handleStore);
 
 const tick = () => new Promise(setTimeout);
 
-const reapplyScrollTopAfterPaste = async () => {
+const reapplyScrollTopAfterPaste = async ({ dispatch, getState, action }) => {
   if (getState().didRecentlyPaste) {
     const preview = document.getElementById("preview-interior");
     const isScrollTopOff = () =>
@@ -56,9 +56,19 @@ const reapplyScrollTopAfterPaste = async () => {
   }
 };
 
-subscribe(reapplyScrollTopAfterPaste);
-subscribe(() => {
-  //console.log(getState());
+const reapplyScrollTopAfterPublish = ({ dispatch, getState, action }) => {
+  if (action.type === 'PUBLISH') {
+    const preview = document.getElementById("preview-interior");
+    const isScrollTopOff = preview.scrollTop !== getState().testStringPanelScrollTop;
+    if (isScrollTopOff) {
+      preview.scrollTop = getState().testStringPanelScrollTop;
+    }
+  }
+};
+
+subscribe(reapplyScrollTopAfterPublish);
+subscribe(({ action }) => {
+  //console.log('action', action, 'state', getState());
 });
 
 handleStore();

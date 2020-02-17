@@ -15,7 +15,12 @@ const escapeHTML = html => {
   return escapeElement.innerHTML;
 };
 
-const getContent = state => state.testString;
+const getContent = createSelector(state => state.testString, testString => {
+  const needsExtraTrailingNewLine = testString.endsWith('\n') && !testString.endsWith('\n\n')
+  return needsExtraTrailingNewLine
+    ? `${testString}\n`
+    : testString;
+});
 
 // prettier-ignore
 const _break = html`<br class="break" />`;
@@ -137,21 +142,25 @@ async function* renderMatchesAsync(replacementInstructions) {
 }
 
 export const preview = ({ state }) => {
-  const fallbackContent = getFallbackContent(state);
   const { instructions } = state;
+        /*
+  const guarded = guard(
+        [fallbackContent, instructions],
+        () => instructions
+          ? instructions.map(callTemplate)
+          //? asyncAppend(renderMatchesAsync(instructions))
+          : fallbackContent
+    )
+        */
   // prettier-ignore
   return html`
     <div class="preview"><div
       class="preview-interior"
       id="preview-interior"
       .scrollTop=${state.testStringPanelScrollTop}
-    >${guard(
-        [fallbackContent, instructions],
-        () => instructions
-          ? instructions.map(callTemplate)
-          //? asyncAppend(renderMatchesAsync(instructions))
-          : fallbackContent
-      )}
-    </div></div>`;
+    >${instructions
+        ? instructions.map(callTemplate)
+        : getFallbackContent(state)
+    }</div></div>`;
 };
 

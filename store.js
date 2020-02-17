@@ -5,7 +5,7 @@ const createStoreWorker = (path, reducer, initialState) => {
   const getState = () => state;
   const reduceAndNotify = action => {
     state = reducer(state, action);
-    for (let callback of subscribers) callback();
+    for (let callback of subscribers) callback({ dispatch, getState, action });
   };
   const dispatch = (action, isAsync = true) => {
     if (isAsync) {
@@ -14,7 +14,11 @@ const createStoreWorker = (path, reducer, initialState) => {
       reduceAndNotify(action);
     }
   };
-  const subscribe = callback => subscribers.add(callback);
+const subscribe = callback => {
+  subscribers.add(callback);
+  const unsubscribe = () => subscribers.delete(callback);
+  return unsubscribe;
+};
   worker.addEventListener("message", function handleWorkerMessage(e) {
     reduceAndNotify(e.data);
   });

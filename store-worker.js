@@ -116,8 +116,15 @@ const getMatch = createSelector(
   }
 );
 
+const getContent = createSelector(state => state.testString, testString => {
+  const needsExtraTrailingNewLine = testString.endsWith('\n') && !testString.endsWith('\n\n')
+  return needsExtraTrailingNewLine
+    ? `${testString}\n`
+    : testString;
+});
+
 const memoizedCreateInstructions = createSelector(
-  function getContent(state) { return state.testString; },
+  getContent,
   getRegExp,
   getMatch,
   createInstructions
