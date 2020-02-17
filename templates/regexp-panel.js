@@ -28,6 +28,7 @@ const flags = ({ state, dispatch, flags }) => {
 };
 
 export const regExpPanel = ({ state, dispatch, handler }) => {
+  // prettier-ignore
   return html`
     <section class="panel regexp-panel">
       <label class="label" for="regexp-string">Regular Expression</label>
@@ -38,9 +39,7 @@ export const regExpPanel = ({ state, dispatch, handler }) => {
         @keyup=${handler}
         @change=${handler}
         spellcheck="false"
-      >
-${state.regExpString}</textarea
-      >
+      >${state.regExpString}</textarea>
     ${flags({ state, dispatch, flags: [
       { name: "global", label: "Global" },
       { name: "ignoreCase", label: "Ignore Case" },
