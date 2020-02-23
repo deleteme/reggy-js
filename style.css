@@ -142,7 +142,6 @@ body {
 
 .preview {
   background: white;
-  white-space: pre-wrap;
   vertical-align: text-bottom;
   appearance: textarea;
   -moz-appearance: textarea;
@@ -156,6 +155,8 @@ body {
   overflow: scroll;
   overflow-anchor: auto;
   overflow-wrap: break-word;
+  white-space: pre-wrap;
+  word-break: break-word;
   /* Hide scrollbar */
   -ms-overflow-style: none; /* Internet Explorer 10+ */
   scrollbar-width: none; /* Firefox */
