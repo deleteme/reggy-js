@@ -166,6 +166,11 @@ body {
   display: none; /* Safari and Chrome */
 }
 
+.preview-slide {
+  --y: 0px;
+  transform: translateY(var(--y));
+}
+
 .debug .panel {
   width: 50%;
 }

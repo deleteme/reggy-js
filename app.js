@@ -39,14 +39,14 @@ subscribe(handleStore);
 const reapplyScrollTopAfterPublish = ({ getState, action }) => {
   if (action.type === 'PUBLISH') {
     const preview = document.getElementById("preview-interior");
-    const isScrollTopOff = preview.scrollTop !== getState().testStringPanelScrollTop;
-    if (isScrollTopOff) {
-      preview.scrollTop = getState().testStringPanelScrollTop;
-    }
+    //const isScrollTopOff = preview.scrollTop !== getState().testStringPanelScrollTop;
+    //if (isScrollTopOff) {
+      //preview.scrollTop = getState().testStringPanelScrollTop;
+    //}
   }
 };
 
-subscribe(reapplyScrollTopAfterPublish);
+//subscribe(reapplyScrollTopAfterPublish);
 //subscribe(({ action }) => {
   //console.log('action', action, 'state', getState());
 //});

@@ -51,17 +51,20 @@ const getFallbackContent = createSelector(
   }
 );
 
+
 export const preview = ({ state }) => {
   const { instructions } = state;
+  const content = instructions
+    ? instructions.map(callTemplate)
+    : getFallbackContent(state);
   // prettier-ignore
   return html`
     <div class="preview"><div
       class="preview-interior"
       id="preview-interior"
-      .scrollTop=${state.testStringPanelScrollTop}
-    >${instructions
-        ? instructions.map(callTemplate)
-        : getFallbackContent(state)
-    }</div></div>`;
+    ><div
+      class="preview-slide"
+      style="--y: ${state.testStringPanelScrollTop * -1}px;"
+    >${content}</div></div></div>`;
 };
 
