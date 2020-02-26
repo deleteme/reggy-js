@@ -47,7 +47,7 @@ const reapplyScrollTopAfterPublish = ({ getState, action }) => {
 };
 
 subscribe(reapplyScrollTopAfterPublish);
-//subscribe(({ action }) => {
+//subscribe(({ getState, action }) => {
   //console.log('action', action, 'state', getState());
 //});
 

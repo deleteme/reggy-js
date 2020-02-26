@@ -28,7 +28,7 @@ export const testStringPanel = ({ state, dispatch, handler }) => {
   };
   // prettier-ignore
   return html`
-    <section class="panel test-string-panel-input-mask debug">
+    <section class="panel test-string-panel-input-mask">
       <section class="panel test-string-panel">
         <header class="panel-header">
           <label class="label" for="test-string">

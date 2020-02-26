@@ -167,7 +167,8 @@ body {
   display: none; /* Safari and Chrome */
 }
 
-.debug .panel {
+.debug .test-string-panel,
+.debug .preview-panel {
   width: 50%;
 }
 
@@ -175,7 +176,7 @@ body {
   right: 0;
 }
 
-.debug .textarea {
+.debug .test-string-panel .textarea {
   background: inherit;
   color: inherit;
 }

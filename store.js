@@ -26,6 +26,7 @@ const subscribe = callback => {
 };
 
 const initialState = {
+  debug: window.location.search.includes('debug=1'),
   global: true,
   ignoreCase: false,
   instructions: null,

@@ -18,7 +18,8 @@ export const app = ({ state, dispatch }) => {
       class="${
         classMap({
           panels: true,
-          "has-error": regExp instanceof Error
+          "has-error": regExp instanceof Error,
+          debug: state.debug
         })
       }"
     >
