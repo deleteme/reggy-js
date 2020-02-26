@@ -48,7 +48,7 @@ const reducer = (state, action) => {
 };
 
 export const { dispatch, getState, subscribe } = createStoreWorker(
-  "/store-worker.js",
+  "./store-worker.js",
   reducer,
   initialState
 );
