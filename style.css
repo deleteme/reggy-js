@@ -73,7 +73,8 @@ body {
 .textarea,
 .preview {
   font-family: monospace;
-  font-size: 1.5rem;
+  /*font-size: 1.5rem;*/
+  font-size: 24.99px;/* makes each character is 15px x 29px */
   /* font-size: calc(100vw/20); */
   height: calc(100% - var(--label-height));
   line-height: calc(1em + 2px);

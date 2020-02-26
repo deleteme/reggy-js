@@ -1,6 +1,7 @@
 import { render } from "./packages.js";
 import { getState, subscribe, dispatch } from "./store.js";
 import { app } from "./templates/app.js";
+import { measurePreviewArea } from "./detect-textarea-size.js";
 
 const add = (a, b) => a + b;
 
@@ -47,10 +48,21 @@ const reapplyScrollTopAfterPublish = ({ getState, action }) => {
 };
 
 subscribe(reapplyScrollTopAfterPublish);
-//subscribe(({ getState, action }) => {
-  //console.log('action', action, 'state', getState());
-//});
+
+const stop = subscribe((props) => {
+  measurePreviewArea(props)
+  stop();
+});
+
+subscribe(({ getState, action }) => {
+  console.log('action', action, 'state', getState());
+});
 
 handleStore();
 
 measure();
+
+window.addEventListener('resize', () => {
+  console.log('resize. measuring.');
+  measurePreviewArea({ getState, dispatch })
+});

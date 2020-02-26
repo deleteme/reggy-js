@@ -14,13 +14,21 @@ const renderMatchCount = ({ state }) => {
 
 export const testStringPanel = ({ state, dispatch, handler }) => {
   const handleScrollTop = element => {
+    const scrollTop = element.scrollTop;
     dispatch(
       {
         type: "INPUT_CHANGED",
         name: "testStringPanelScrollTop",
-        value: element.scrollTop
+        value: scrollTop
       },
       false
+    );
+    dispatch(
+      {
+        type: "INPUT_CHANGED",
+        name: "asyncScrollTop",
+        value: scrollTop
+      }
     );
   };
   const handleScroll = e => {

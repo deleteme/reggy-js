@@ -28,11 +28,18 @@ const reducer = (state, action) => {
       return { ...action.initialState, instructions: memoizedCreateInstructions(action.initialState) };
     case "INPUT_CHANGED":
       return instructionsReducer(state, action);
+    case "MEASURE_PREVIEW":
+      return measurePreviewReducer(state, action);
     default:
       return state;
   }
 };
 
+const measurePreviewReducer = (state, action) => {
+  const newState = { ...state, areaHeight: action.areaHeight, areaWidth: action.areaWidth };
+  const instructions = memoizedCreateInstructions(newState);
+  return { ...newState, instructions };
+};
 
 const instructionsReducer = (state, action) => {
   const newState = inputChangedReducer(state, action);
@@ -130,5 +137,71 @@ const memoizedCreateInstructions = createSelector(
   createInstructions
 );
 
+const isDef = value => typeof value !== 'undefined';
+
+const createVisibleInstructions = (
+  content,
+  regexp,
+  match,
+  areaHeight,
+  areaWidth,
+  scrollTop
+) => {
+  if (
+    regexp instanceof RegExp &&
+    content.length > 0 &&
+    match &&
+    areaHeight &&
+    areaWidth &&
+    isDef(scrollTop)
+  ) {
+    const originalContent = content;
+    const columns = Math.round(areaWidth / CHARACTER_WIDTH);
+    const rows = Math.ceil(areaHeight / LINE_HEIGHT);
+    const scrollPercentage = Math.abs(scrollTop) / areaHeight;
+    const firstLine = Math.round(scrollPercentage * rows);
+    const lastLine = firstLine + rows;
+
+    const instructions = [];
+    let i = 0;
+    let lastOffset = 0;
+    let hasTailInInstructions = false;
+
+    const NL = /\n/g;
+    const countLines = (string, columns) => {
+      const newLineCount = NL.test(string) ? string.match(NL).length : 0;
+      const naturalLines = columns * (string.length - newLineCount);
+      const lines = newLineCount + naturalLines;
+      return lines;
+    };
+    const isContentVisible = (firstLine, lastLine, offsetStart, offsetEnd) => {
+      const slice = originalContent.slice(offsetStart, offsetEnd);
+      const linesBeforeSlice = countLines(originalContent.slice(0, offsetStart));
+      const linesInSlice = countLines(slice, columns);
+      const firstLineInSlice = linesBeforeSlice;
+      const lastLineInSlice = linesBeforeSlice + linesInSlice;
+      const isVisible = firstLine <= firstLineInSlice && lastLineInSlice <= lastLine;
+      return isVisible;
+    };
+    // the function formats and collects each match into instructions,
+    // as long as it is within the first and last lines
+    content = content.replace(regexp, function replace(m) {
+      const argsLength = arguments.length;
+      const offset = arguments[argsLength - 2];
+      const head = content.slice(lastOffset, offset);
+      const needsTailInInstructions = match.length - i < 3;
+      if (hasTailInInstructions) instructions.pop(); // remove the tail
+      if (isContentVisible(firstLine, lastLine, lastOffset, offset)) {
+        instructions.push(instruction(renderHead, head));
+      }
+
+      lastOffset = offset + m.length;
+      i += 1;
+      return "";
+    });
+    return instructions;
+  }
+  return null;
+};
 
 createStore(reducer, null);

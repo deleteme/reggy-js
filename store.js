@@ -14,11 +14,11 @@ const createStoreWorker = (path, reducer, initialState) => {
       reduceAndNotify(action);
     }
   };
-const subscribe = callback => {
-  subscribers.add(callback);
-  const unsubscribe = () => subscribers.delete(callback);
-  return unsubscribe;
-};
+  const subscribe = callback => {
+    subscribers.add(callback);
+    const unsubscribe = () => subscribers.delete(callback);
+    return unsubscribe;
+  };
   worker.addEventListener("message", function handleWorkerMessage(e) {
     reduceAndNotify(e.data);
   });
@@ -31,10 +31,16 @@ const initialState = {
   ignoreCase: false,
   instructions: null,
   multiline: false,
-  regExpString: "[a-z]{4,}",
+  //regExpString: "[a-z]{4,}",
+  regExpString: "\\d",
+  //testString:
+    //"This is a string that will be highlighted when your regular expression matches something.",
   testString:
-    "This is a string that will be highlighted when your regular expression matches something.",
-  testStringPanelScrollTop: 0
+    "0123456789",
+  testStringPanelScrollTop: 0,
+  asyncScrollTop: 0,
+  areaHeight: null,
+  areaWidth: null
 };
 const reducer = (state, action) => {
   switch (action.type) {
