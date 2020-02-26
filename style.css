@@ -162,7 +162,7 @@ body {
   scrollbar-width: none; /* Firefox */
 }
 
-.preview::-webkit-scrollbar {
+.preview-interior::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
 }
 
