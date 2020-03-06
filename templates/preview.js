@@ -58,7 +58,6 @@ export const preview = ({ state }) => {
     <div class="preview"><div
       class="preview-interior"
       id="preview-interior"
-      .scrollTop=${state.testStringPanelScrollTop}
     >${instructions
         ? instructions.map(callTemplate)
         : getFallbackContent(state)

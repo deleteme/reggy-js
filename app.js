@@ -40,10 +40,14 @@ subscribe(handleStore);
 const reapplyScrollTopAfterPublish = ({ getState, action }) => {
   if (action.type === 'PUBLISH') {
     const preview = document.getElementById("preview-interior");
-    const isScrollTopOff = preview.scrollTop !== getState().testStringPanelScrollTop;
-    if (isScrollTopOff) {
-      preview.scrollTop = getState().testStringPanelScrollTop;
-    }
+    //const isScrollTopOff = preview.scrollTop !== getState().testStringPanelScrollTop;
+    //if (isScrollTopOff) {
+      //preview.scrollTop = getState().testStringPanelScrollTop;
+    //}
+    const LINE_HEIGHT = 26;
+    const scrollTop = getState().testStringPanelScrollTop
+    const indexOfFirstVisibleLine = Math.floor(scrollTop / LINE_HEIGHT);
+    preview.scrollTop = scrollTop - (indexOfFirstVisibleLine * LINE_HEIGHT);
   }
 };
 
@@ -55,7 +59,7 @@ const stop = subscribe((props) => {
 });
 
 subscribe(({ getState, action }) => {
-  console.log('action', action, 'state', getState());
+  //console.log('action', action, 'state', getState());
 });
 
 handleStore();

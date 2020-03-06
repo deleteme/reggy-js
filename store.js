@@ -8,6 +8,7 @@ const createStoreWorker = (path, reducer, initialState) => {
     for (let callback of subscribers) callback({ dispatch, getState, action });
   };
   const dispatch = (action, isAsync = true) => {
+    //console.log('dispatch:', action, isAsync);
     if (isAsync) {
       worker.postMessage(action);
     } else {
@@ -25,6 +26,9 @@ const createStoreWorker = (path, reducer, initialState) => {
   return { dispatch, getState, subscribe };
 };
 
+const shortTestString = "0123456789";
+const testStringThatGoesLong = `123456789022345678903234567890423456789052345678906234567890723456789082345678909234567890023456789012345678902234567890323456789042345678905234567890`
+
 const initialState = {
   debug: window.location.search.includes('debug=1'),
   global: true,
@@ -35,8 +39,7 @@ const initialState = {
   regExpString: "\\d",
   //testString:
     //"This is a string that will be highlighted when your regular expression matches something.",
-  testString:
-    "0123456789",
+  testString: testStringThatGoesLong,
   testStringPanelScrollTop: 0,
   asyncScrollTop: 0,
   areaHeight: null,
