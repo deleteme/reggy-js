@@ -149,6 +149,50 @@ const memoizedCreateInstructions = createSelector(
   createInstructions
 );
 
+const assert = (message, value, expected) => {
+  if (value === expected) {
+    // ok
+  } else {
+    throw new Error(`assertion failed: ${message}`);
+  }
+};
+
+const NL = /\n/g;
+const NLs = '\n';
+const countLines = (string, columns) => {
+  let index = 0;
+  let characterCount = 0;
+  let lineCount = string.length > 0 ?
+    string[0] === NLs
+      ? 0
+      : 1 : 0;
+  const wrap = () => {
+    characterCount = 0;
+    lineCount += 1;
+  };
+  let previousCharacter = '';
+  for (let character of string) {
+    characterCount += 1;
+    previousCharacter = string[index - 1];
+    const characterFollowsNLInMiddleOfLine = index > 0 && previousCharacter === NLs && characterCount !== 1;
+    if (characterCount > columns || characterFollowsNLInMiddleOfLine) {
+      wrap();
+    }
+    index += 1;
+  }
+  return lineCount;
+};
+
+assert('one line: xxxx', countLines('xxxx', 5), 1);
+assert('one line: xxxxx', countLines('xxxxx', 5), 1);
+assert('one line: xxxx\n', countLines('xxxx\n', 5), 1);
+assert('one line: \n\n', countLines('\n\n', 5), 1);
+assert('two short lines: xx\nxx', countLines('xx\nxx', 5), 2);
+assert('two lines: xxxxx\n', countLines('xxxxx\n', 5), 2);
+assert('two lines: xxxxx\nxxxx', countLines('xxxxx\nxxxx', 5), 2);
+assert('two lines: xxxxx\nxxxxx', countLines('xxxxx\nxxxxx', 5), 2);
+assert('two lines: xxxxxxxxxx', countLines('xxxxx\nxxxxx', 5), 2);
+
 const isDef = value => typeof value !== "undefined";
 
 const createVisibleInstructions = (
@@ -167,42 +211,36 @@ const createVisibleInstructions = (
     areaWidth &&
     isDef(scrollTop)
   ) {
+    let enableLogging = false;
     const originalContent = content;
     const columns = Math.round(areaWidth / CHARACTER_WIDTH);
     const rows = Math.ceil(areaHeight / LINE_HEIGHT);
     const scrollPercentage = Math.abs(scrollTop) / areaHeight;
     const indexOfFirstVisibleLine = Math.floor(scrollTop / LINE_HEIGHT);
     //const indexOfFirstVisibleLine = Math.floor(scrollPercentage * rows);
-    const indexOfLastVisibleLine = indexOfFirstVisibleLine + rows;
-    //console.log('indexOfFirstVisibleLine', indexOfFirstVisibleLine, 'indexOfLastVisibleLine', indexOfLastVisibleLine);
+    const indexOfLastVisibleLine = indexOfFirstVisibleLine + rows - 1;
+    if (enableLogging) console.log('indexOfFirstVisibleLine', indexOfFirstVisibleLine, 'indexOfLastVisibleLine', indexOfLastVisibleLine);
 
     const instructions = [];
     let i = 0;
     let lastOffset = 0;
     let hasTailInInstructions = false;
     let hasAlreadyPaddedFirstLine = false;
+    let didReachStartOfVisibleBlock = false;
+    let didReachEndOfVisibleBlock = false;
+
     const getPadChars = h => {
-      const remainder = h % columns;
+      if (h.endsWith(NLs)) return 0;
+      const remainder = h.length % columns;
       const isDividedEvenly = remainder === 0;
       if (isDividedEvenly) return 0;
       return columns - remainder;
     };
 
-    const NL = /\n/g;
-    const countLines = (string, columns) => {
-      const newLineCount = NL.test(string) ? string.match(NL).length : 0;
-      const naturalLines = string.length > 0 ? Math.ceil(((string.length - newLineCount) / columns)) : 0;
-      const lines = newLineCount + naturalLines;
-      return lines;
-    };
     const isContentVisible = (indexOfFirstVisibleLine, indexOfLastVisibleLine, offsetStart, offsetEnd) => {
+      if (didReachEndOfVisibleBlock) return false;
       const slice = originalContent.slice(offsetStart, offsetEnd);
-      const linesBeforeSlice = countLines(
-        originalContent.slice(0, offsetStart), columns
-      );
-      //const linesInSlice = countLines(slice, columns);
       const indexOfFirstLineInSlice = Math.max(countLines(originalContent.slice(0, offsetStart), columns) - 1, 0);
-      //const indexOfLastLineInSlice = indexOfFirstLineInSlice + linesInSlice;
       const indexOfLastLineInSlice = Math.max(countLines(originalContent.slice(0, offsetEnd), columns) - 1, 0);
       const isVisible =
         indexOfFirstVisibleLine <= indexOfLastLineInSlice && indexOfLastLineInSlice <= indexOfLastVisibleLine;
@@ -218,11 +256,10 @@ const createVisibleInstructions = (
       const needsTailInInstructions = match.length - i < 3;
       if (hasTailInInstructions) instructions.pop(); // remove the tail
       if (head.length > 0 && isContentVisible(indexOfFirstVisibleLine, indexOfLastVisibleLine, lastOffset, offset)) {
-        //if (instructions.length === 0 && head === 'f Tw') debugger;
         // if head, and needs to pad out to a full line
         const mightNeedPadding = !hasAlreadyPaddedFirstLine && instructions.length === 0 && indexOfFirstVisibleLine > 0;
         const numberOfCharsToPadRow = mightNeedPadding
-          ? getPadChars(head.length)
+          ? getPadChars(head)
           : 0;
         if (numberOfCharsToPadRow > 0) {
           instructions.push(instruction(renderHead, 'x'.repeat(numberOfCharsToPadRow)));
@@ -230,11 +267,12 @@ const createVisibleInstructions = (
         }
         instructions.push(instruction(renderHead, head));
       }
-      //if (indexOfFirstVisibleLine === 0 && m === '5' && i >= 140) debugger;
       if (isContentVisible(indexOfFirstVisibleLine, indexOfLastVisibleLine, lastOffset, offset + m.length)) {
+        if (!didReachStartOfVisibleBlock) didReachStartOfVisibleBlock = true;
         instructions.push(instruction(renderMatch, m));
       } else {
-        notVisible.push({ m, i });
+        if (didReachStartOfVisibleBlock) didReachEndOfVisibleBlock = true;
+        if (enableLogging) notVisible.push({ m, i });
       }
 
       if (needsTailInInstructions) {
@@ -251,8 +289,10 @@ const createVisibleInstructions = (
       i += 1;
       return "";
     });
-    //console.log('not visible instructions', notVisible);
-    //console.table("instructions", instructions.map(i => ({template:'hmt'[i[0]],content: i[1]})));
+    if (enableLogging) {
+      console.log('not visible instructions', notVisible);
+      console.log("instructions", instructions.map(i => ({template:'hmt'[i[0]],content: i[1]})));
+    }
     return instructions;
   }
   return null;

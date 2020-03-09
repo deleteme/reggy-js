@@ -36,7 +36,7 @@ const initialState = {
   instructions: null,
   multiline: false,
   //regExpString: "[a-z]{4,}",
-  regExpString: "\\d",
+  regExpString: "\\d{10}",
   //testString:
     //"This is a string that will be highlighted when your regular expression matches something.",
   testString: testStringThatGoesLong,

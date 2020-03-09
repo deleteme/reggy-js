@@ -47,7 +47,9 @@ const reapplyScrollTopAfterPublish = ({ getState, action }) => {
     const LINE_HEIGHT = 26;
     const scrollTop = getState().testStringPanelScrollTop
     const indexOfFirstVisibleLine = Math.floor(scrollTop / LINE_HEIGHT);
+    //console.log('indexOfFirstVisibleLine', indexOfFirstVisibleLine);
     preview.scrollTop = scrollTop - (indexOfFirstVisibleLine * LINE_HEIGHT);
+    //console.log('preview.scrollTop', preview.scrollTop);
   }
 };
 
