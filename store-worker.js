@@ -171,7 +171,9 @@ const countLines = (string, columns) => {
     lineCount += 1;
   };
   let previousCharacter = '';
-  for (let character of string) {
+  const max = string.length - 1;
+  while (index <= max) {
+    const character = string[index];
     characterCount += 1;
     previousCharacter = string[index - 1];
     const characterFollowsNLInMiddleOfLine = index > 0 && previousCharacter === NLs && characterCount !== 1;
@@ -238,7 +240,7 @@ const createVisibleInstructions = (
     };
 
     const isContentVisible = (indexOfFirstVisibleLine, indexOfLastVisibleLine, offsetStart, offsetEnd) => {
-      if (didReachEndOfVisibleBlock) return false;
+      //if (didReachEndOfVisibleBlock) return false;
       const slice = originalContent.slice(offsetStart, offsetEnd);
       const indexOfFirstLineInSlice = Math.max(countLines(originalContent.slice(0, offsetStart), columns) - 1, 0);
       const indexOfLastLineInSlice = Math.max(countLines(originalContent.slice(0, offsetEnd), columns) - 1, 0);
