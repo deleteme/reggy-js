@@ -153,13 +153,28 @@ const assert = (message, value, expected) => {
   if (value === expected) {
     // ok
   } else {
-    throw new Error(`assertion failed: ${message}`);
+    throw new Error(`assertion failed: ${message}. Expected: ${expected}. Received: ${value}.`);
   }
 };
+
+const xassert = () => {};
+
+const wrap_text = (string, columns) => {
+  if (string.length === 0) return 0;
+  //const reg = new RegExp(`(.{1,${columns}})( +|$)\n?|(.{${columns}})`, 'g')
+  //const reg = new RegExp(`(.{1,${columns}})\n?|(.{${columns}})`, 'g')
+  //const reg = new RegExp(`(.{1,${columns}})\n?|(.{${columns}})`, 'g')
+  const reg = new RegExp(`\n?.{1,${columns}}|\n$`, 'g')
+  //const reg = new RegExp(`\n?.{1,${columns}}`, 'g')
+  const capturingGroups = [...string.matchAll(reg)];
+  //console.log('capturingGroups', capturingGroups);
+  return capturingGroups.length;
+}
 
 const NL = /\n/g;
 const NLs = '\n';
 const countLines = (string, columns) => {
+  return wrap_text(string, columns);
   let index = 0;
   let characterCount = 0;
   let lineCount = string.length > 0 ?
@@ -167,16 +182,16 @@ const countLines = (string, columns) => {
       ? 0
       : 1 : 0;
   const wrap = () => {
-    characterCount = 0;
+    characterCount = 1;
     lineCount += 1;
   };
   let previousCharacter = '';
   const max = string.length - 1;
   while (index <= max) {
     const character = string[index];
-    characterCount += 1;
     previousCharacter = string[index - 1];
-    const characterFollowsNLInMiddleOfLine = index > 0 && previousCharacter === NLs && characterCount !== 1;
+  const characterFollowsNLInMiddleOfLine = index > 0 && previousCharacter === NLs// && characterCount !== 1;
+    characterCount += 1;
     if (characterCount > columns || characterFollowsNLInMiddleOfLine) {
       wrap();
     }
@@ -187,13 +202,15 @@ const countLines = (string, columns) => {
 
 assert('one line: xxxx', countLines('xxxx', 5), 1);
 assert('one line: xxxxx', countLines('xxxxx', 5), 1);
-assert('one line: xxxx\n', countLines('xxxx\n', 5), 1);
-assert('one line: \n\n', countLines('\n\n', 5), 1);
+xassert('one line: \n\n', countLines('\n\n', 5), 1);
+assert('two lines: xxxx\n', countLines('xxxx\n', 5), 2);
 assert('two short lines: xx\nxx', countLines('xx\nxx', 5), 2);
+assert('two lines: 1xxxx2', countLines('1xxxx2', 5), 2);
 assert('two lines: xxxxx\n', countLines('xxxxx\n', 5), 2);
 assert('two lines: xxxxx\nxxxx', countLines('xxxxx\nxxxx', 5), 2);
 assert('two lines: xxxxx\nxxxxx', countLines('xxxxx\nxxxxx', 5), 2);
-assert('two lines: xxxxxxxxxx', countLines('xxxxx\nxxxxx', 5), 2);
+assert('two lines: xxxxxxxxxx', countLines('xxxxxxxxxx', 5), 2);
+assert('three lines: 11111222223', countLines('11111222223', 5), 3);
 
 const isDef = value => typeof value !== "undefined";
 
@@ -213,14 +230,15 @@ const createVisibleInstructions = (
     areaWidth &&
     isDef(scrollTop)
   ) {
-    let enableLogging = false;
+    let enableLogging = true;
     const originalContent = content;
     const columns = Math.round(areaWidth / CHARACTER_WIDTH);
     const rows = Math.ceil(areaHeight / LINE_HEIGHT);
     const scrollPercentage = Math.abs(scrollTop) / areaHeight;
     const indexOfFirstVisibleLine = Math.floor(scrollTop / LINE_HEIGHT);
     //const indexOfFirstVisibleLine = Math.floor(scrollPercentage * rows);
-    const indexOfLastVisibleLine = indexOfFirstVisibleLine + rows - 1;
+    //const indexOfLastVisibleLine = indexOfFirstVisibleLine + rows - 1;
+    const indexOfLastVisibleLine = indexOfFirstVisibleLine + rows;// add an extra visible row?
     if (enableLogging) console.log('indexOfFirstVisibleLine', indexOfFirstVisibleLine, 'indexOfLastVisibleLine', indexOfLastVisibleLine);
 
     const instructions = [];
