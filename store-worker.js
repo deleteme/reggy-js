@@ -159,45 +159,21 @@ const assert = (message, value, expected) => {
 
 const xassert = () => {};
 
-const wrap_text = (string, columns) => {
-  if (string.length === 0) return 0;
-  //const reg = new RegExp(`(.{1,${columns}})( +|$)\n?|(.{${columns}})`, 'g')
-  //const reg = new RegExp(`(.{1,${columns}})\n?|(.{${columns}})`, 'g')
-  //const reg = new RegExp(`(.{1,${columns}})\n?|(.{${columns}})`, 'g')
-  const reg = new RegExp(`\n?.{1,${columns}}|\n$`, 'g')
-  //const reg = new RegExp(`\n?.{1,${columns}}`, 'g')
-  const capturingGroups = [...string.matchAll(reg)];
-  //console.log('capturingGroups', capturingGroups);
-  return capturingGroups.length;
-}
+
 
 const NL = /\n/g;
 const NLs = '\n';
+
+const isWithin = (a, b, c) => a <= b && b <= c;
+
+const getLinesRegExp = columns => {
+  const reg = new RegExp(`\n?.{1,${columns}}|\n$`, 'g')
+  return reg;
+};
+
 const countLines = (string, columns) => {
-  return wrap_text(string, columns);
-  let index = 0;
-  let characterCount = 0;
-  let lineCount = string.length > 0 ?
-    string[0] === NLs
-      ? 0
-      : 1 : 0;
-  const wrap = () => {
-    characterCount = 1;
-    lineCount += 1;
-  };
-  let previousCharacter = '';
-  const max = string.length - 1;
-  while (index <= max) {
-    const character = string[index];
-    previousCharacter = string[index - 1];
-  const characterFollowsNLInMiddleOfLine = index > 0 && previousCharacter === NLs// && characterCount !== 1;
-    characterCount += 1;
-    if (characterCount > columns || characterFollowsNLInMiddleOfLine) {
-      wrap();
-    }
-    index += 1;
-  }
-  return lineCount;
+  const reg = new RegExp(`\n?.{1,${columns}}|\n$`, 'g')
+  return string.match(reg).length;
 };
 
 assert('one line: xxxx', countLines('xxxx', 5), 1);
@@ -230,7 +206,7 @@ const createVisibleInstructions = (
     areaWidth &&
     isDef(scrollTop)
   ) {
-    let enableLogging = true;
+    const enableLogging = false;
     const originalContent = content;
     const columns = Math.round(areaWidth / CHARACTER_WIDTH);
     const rows = Math.ceil(areaHeight / LINE_HEIGHT);
@@ -257,14 +233,30 @@ const createVisibleInstructions = (
       return columns - remainder;
     };
 
+    const countLinesRegExp = getLinesRegExp(columns);
     const isContentVisible = (indexOfFirstVisibleLine, indexOfLastVisibleLine, offsetStart, offsetEnd) => {
-      //if (didReachEndOfVisibleBlock) return false;
-      const slice = originalContent.slice(offsetStart, offsetEnd);
-      const indexOfFirstLineInSlice = Math.max(countLines(originalContent.slice(0, offsetStart), columns) - 1, 0);
-      const indexOfLastLineInSlice = Math.max(countLines(originalContent.slice(0, offsetEnd), columns) - 1, 0);
-      const isVisible =
-        indexOfFirstVisibleLine <= indexOfLastLineInSlice && indexOfLastLineInSlice <= indexOfLastVisibleLine;
-      return isVisible;
+      const linesIterator = originalContent.matchAll(countLinesRegExp);
+      const getIsVisible = (idx) => {
+        return isWithin(indexOfFirstVisibleLine, idx, indexOfLastVisibleLine);
+      };
+      let index = 0;
+      let topIndex = -1;
+      let bottomIndex = -1;
+      for (line of linesIterator) {
+        const lineContent = line[0];
+        if (topIndex === -1 && isWithin(line.index, offsetStart, charCount + lineContent.length)) {
+          topIndex = index;
+          const isTopOfContentVisible = getIsVisible(topIndex);
+          if (isTopOfContentVisible) return true;
+        }
+        if (bottomIndex === -1 && isWithin(line.index, offsetEnd, charCount + lineContent.length)){
+          bottomIndex = index;
+          const isBottomOfContentVisible = getIsVisible(bottomIndex);
+          return isBottomOfContentVisible;
+        }
+
+        index += 1;
+      }
     };
     const notVisible = [];
     // the function formats and collects each match into instructions,
