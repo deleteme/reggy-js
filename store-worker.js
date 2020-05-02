@@ -191,7 +191,7 @@ assert('three lines: 11111222223', countLines('11111222223', 5), 3);
 const isDef = value => typeof value !== "undefined";
 
 const createVisibleInstructions = (
-  content,
+  originalContent,
   regexp,
   match,
   areaHeight,
@@ -200,14 +200,14 @@ const createVisibleInstructions = (
 ) => {
   if (
     regexp instanceof RegExp &&
-    content.length > 0 &&
+    originalContent.length > 0 &&
     match &&
     areaHeight &&
     areaWidth &&
     isDef(scrollTop)
   ) {
-    const enableLogging = false;
-    const originalContent = content;
+    const enableLogging = true;
+    let content = originalContent;
     const columns = Math.round(areaWidth / CHARACTER_WIDTH);
     const rows = Math.ceil(areaHeight / LINE_HEIGHT);
     const scrollPercentage = Math.abs(scrollTop) / areaHeight;
@@ -234,40 +234,50 @@ const createVisibleInstructions = (
     };
 
     const countLinesRegExp = getLinesRegExp(columns);
-    const isContentVisible = (indexOfFirstVisibleLine, indexOfLastVisibleLine, offsetStart, offsetEnd) => {
+
+    const isContentVisible = (offsetStart, offsetEnd) => {
       const linesIterator = originalContent.matchAll(countLinesRegExp);
       const getIsVisible = (idx) => {
-        return isWithin(indexOfFirstVisibleLine, idx, indexOfLastVisibleLine);
+        const visible = indexOfFirstVisibleLine <= idx && idx <= indexOfLastVisibleLine;
+        return visible;
       };
       let index = 0;
       let topIndex = -1;
       let bottomIndex = -1;
-      for (line of linesIterator) {
+      for (const line of linesIterator) {
         const lineContent = line[0];
-        if (topIndex === -1 && isWithin(line.index, offsetStart, charCount + lineContent.length)) {
+        if (topIndex === -1 && (line.index <= offsetStart && offsetStart < line.index + lineContent.length)) {
           topIndex = index;
-          const isTopOfContentVisible = getIsVisible(topIndex);
-          if (isTopOfContentVisible) return true;
+          const isTopInViewport = getIsVisible(topIndex);
+          if (isTopInViewport) return true;
+          if (topIndex > indexOfLastVisibleLine) return false;
         }
-        if (bottomIndex === -1 && isWithin(line.index, offsetEnd, charCount + lineContent.length)){
+        if (bottomIndex === -1 && (line.index <= offsetEnd && offsetEnd < line.index + lineContent.length)){
           bottomIndex = index;
-          const isBottomOfContentVisible = getIsVisible(bottomIndex);
-          return isBottomOfContentVisible;
+          const isBottomInViewport = getIsVisible(bottomIndex);
+          if (isBottomInViewport) return true;
+        }
+
+        if (topIndex !== -1 && bottomIndex !== -1) {
+          return topIndex <= indexOfLastVisibleLine && bottomIndex >= indexOfFirstVisibleLine;
         }
 
         index += 1;
       }
     };
     const notVisible = [];
+    console.log('regexp', regexp);
     // the function formats and collects each match into instructions,
     // as long as it is within the first and last lines
     content = content.replace(regexp, function replace(m) {
       const argsLength = arguments.length;
       const offset = arguments[argsLength - 2];
       const head = content.slice(lastOffset, offset);
-      const needsTailInInstructions = match.length - i < 3;
+      const needsTailInInstructions = regexp.global ? match.length - i < 3 : true;
+      const matchOffsetEnd = offset + Math.max(m.length - 1, 0);
+      console.log('needsTailInInstructions', needsTailInInstructions);
       if (hasTailInInstructions) instructions.pop(); // remove the tail
-      if (head.length > 0 && isContentVisible(indexOfFirstVisibleLine, indexOfLastVisibleLine, lastOffset, offset)) {
+      if (head.length > 0 && isContentVisible(lastOffset, offset)) {
         // if head, and needs to pad out to a full line
         const mightNeedPadding = !hasAlreadyPaddedFirstLine && instructions.length === 0 && indexOfFirstVisibleLine > 0;
         const numberOfCharsToPadRow = mightNeedPadding
@@ -279,7 +289,7 @@ const createVisibleInstructions = (
         }
         instructions.push(instruction(renderHead, head));
       }
-      if (isContentVisible(indexOfFirstVisibleLine, indexOfLastVisibleLine, lastOffset, offset + m.length)) {
+      if (isContentVisible(offset, matchOffsetEnd)) {
         if (!didReachStartOfVisibleBlock) didReachStartOfVisibleBlock = true;
         instructions.push(instruction(renderMatch, m));
       } else {
@@ -289,9 +299,10 @@ const createVisibleInstructions = (
 
       if (needsTailInInstructions) {
         // if there's a tail, add it
-        const tail = content.slice(offset + m.length);
-        if (tail && isContentVisible(indexOfFirstVisibleLine,
-            indexOfLastVisibleLine, offset + m.length, content.length)) {
+        const tailOffsetStart = offset + m.length;
+        const tail = content.slice(tailOffsetStart);
+        console.log('tail', tail);
+        if (tail && isContentVisible(tailOffsetStart, content.length - 1)) {
           instructions.push(instruction(renderTail, tail));
           hasTailInInstructions = true;
         }
