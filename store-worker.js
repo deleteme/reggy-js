@@ -217,7 +217,7 @@ const createVisibleInstructions = (
     const indexOfLastVisibleLine = indexOfFirstVisibleLine + rows;// add an extra visible row?
     if (enableLogging) console.log('indexOfFirstVisibleLine', indexOfFirstVisibleLine, 'indexOfLastVisibleLine', indexOfLastVisibleLine);
 
-    const instructions = [];
+    let instructions = [];
     let i = 0;
     let lastOffset = 0;
     let hasTailInInstructions = false;
@@ -235,6 +235,86 @@ const createVisibleInstructions = (
 
     const countLinesRegExp = getLinesRegExp(columns);
 
+    const linesIterator = originalContent.matchAll(countLinesRegExp);
+    const matchIterator = regexp.global ? originalContent.matchAll(regexp) : [originalContent.match(regexp)];
+
+    function* visibleLineGenerator(){
+      let lineIndex = 0;
+      for (const line of linesIterator) {
+        const isVisible = indexOfFirstVisibleLine <= lineIndex && lineIndex <= indexOfLastVisibleLine;
+        const lineContent = line[0];
+        if (isVisible) {
+          if (!didReachStartOfVisibleBlock) didReachStartOfVisibleBlock = true;
+          yield { line };
+        } else {
+          if (didReachStartOfVisibleBlock) {
+            if (!didReachEndOfVisibleBlock) didReachEndOfVisibleBlock = true;
+            break;
+          }
+        }
+        lineIndex += 1;
+      }
+    }
+
+    const visibleLinesIterator = visibleLineGenerator();
+
+    function* getContentForLineGenerator(line) {
+      let lineEnd = line.index + line[0].length;
+      const inBounds = (start, end) => {
+        return start < lineEnd && end >= line.index
+      };
+      for (const match of matchIterator) {
+        const matchIndex = match.index;
+        const matchEnd = matchIndex + match[0].length - 1;
+        const hasMatch = inBounds(matchIndex, matchEnd);
+        const m = hasMatch && match[0];
+
+        const headIndex = line.index;
+        const headEnd = match.index;
+        const hasHead = hasMatch && headIndex !== headEnd && inBounds(headIndex, headEnd);
+        const head = hasHead && originalContent.slice(headIndex, headEnd);
+
+        const tailIndex = Math.min(matchEnd + 1, lineEnd);
+        const tailEnd = lineEnd;
+        const hasTail = tailIndex !== tailEnd && hasMatch;
+        const tail = hasTail && originalContent.slice(tailIndex, tailEnd);
+
+        lastOffset = matchEnd + 1;
+
+        if (head || m || tail) {
+          line = yield { head, m, tail };
+          lineEnd = line.index + line[0].length;
+        }
+      }
+
+      while (true) {
+        const tail = originalContent.slice(line.index, lineEnd);
+        line = yield { head: false, m: false, tail }
+        lineEnd = line.index + line[0].length;
+      }
+    }
+
+    function* generateInstructions() {
+      let contentForLineIterator;
+      for (const { line } of visibleLinesIterator) {
+        if (!contentForLineIterator) contentForLineIterator = getContentForLineGenerator(line);
+        const lineContent = line[0];
+        const result = contentForLineIterator.next(line).value;
+        if (result) {
+          const { head, m, tail } = result;
+          if (head) yield instruction(renderHead, head);
+          if (m) yield instruction(renderMatch, m);
+          if (tail) yield instruction(renderTail, tail);
+        }
+      }
+    }
+
+    instructions = [...generateInstructions()];
+
+
+
+
+    /*
     const isContentVisible = (offsetStart, offsetEnd) => {
       const linesIterator = originalContent.matchAll(countLinesRegExp);
       const getIsVisible = (idx) => {
@@ -312,8 +392,9 @@ const createVisibleInstructions = (
       i += 1;
       return "";
     });
+    */
     if (enableLogging) {
-      console.log('not visible instructions', notVisible);
+      //console.log('not visible instructions', notVisible);
       console.log("instructions", instructions.map(i => ({template:'hmt'[i[0]],content: i[1]})));
     }
     return instructions;
