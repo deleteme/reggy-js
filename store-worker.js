@@ -148,12 +148,13 @@ const memoizedCreateInstructions = createSelector(
   getMatch,
   createInstructions
 );
-
+const testResults = [];
 const assert = (message, value, expected) => {
   if (value === expected) {
     // ok
+    testResults.push(`assertion ok: ${message}. Expected: "${expected}". Received: "${value}".`);
   } else {
-    throw new Error(`assertion failed: ${message}. Expected: ${expected}. Received: ${value}.`);
+    testResults.push(new Error(`assertion failed: ${message}. Expected: "${expected}". Received: "${value}".`));
   }
 };
 
@@ -166,14 +167,23 @@ const NLs = '\n';
 
 const isWithin = (a, b, c) => a <= b && b <= c;
 
-const getLinesRegExp = columns => {
-  const reg = new RegExp(`\n?.{1,${columns}}|\n$`, 'g')
+const getLinesRegExp = col => {
+  //const reg = new RegExp(`\n?.{1,${col}}|\n$`, 'g')
+  //const reg = new RegExp(`(.{1,${col}})( +|$)\n?|(.{1,${col}})`, 'g')
+  //const reg = new RegExp(`\n?(.{1,${col}})( +|$)|(.{1,${col}})`, 'g')
+  //const reg = new RegExp(`(.{1,${col - 1}}\s)|(.{1,${col}})`, 'g');
+  //const reg = new RegExp(`(.{1,${col - 1}} )|(\n.{1,${col}})|(\n$)|(.{1,${col}})`, 'g');
+  const reg = new RegExp(`(\n.{1,${col - 1}} )|(\n(?:$|\n))|(.{1,${col}})`, 'g');
   return reg;
+
+  //let regexString = '.{1,' + col + '}';
+  //regexString += '([\\s\u200B]+|$)|[^\\s\u200B]+?([\\s\u200B]+|$)';
+  //return new RegExp(regexString, 'g');
 };
 
 const countLines = (string, columns) => {
-  const reg = new RegExp(`\n?.{1,${columns}}|\n$`, 'g')
-  return string.match(reg).length;
+  const reg = getLinesRegExp(columns);
+  return [...string.matchAll(reg)].length;
 };
 
 assert('one line: xxxx', countLines('xxxx', 5), 1);
@@ -187,21 +197,85 @@ assert('two lines: xxxxx\nxxxx', countLines('xxxxx\nxxxx', 5), 2);
 assert('two lines: xxxxx\nxxxxx', countLines('xxxxx\nxxxxx', 5), 2);
 assert('two lines: xxxxxxxxxx', countLines('xxxxxxxxxx', 5), 2);
 assert('three lines: 11111222223', countLines('11111222223', 5), 3);
+assert(`fifteen lines: 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15`,
+  countLines(`1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15`, 10), 15);
+assert(
+  `eight lines: Two Cities\nFrom Wikipedia, the free encyclopedia\nJump to navigation`,
+  countLines(
+    `Two Cities\nFrom Wikipedia, the free encyclopedia\nJump to navigation`,
+    10),
+  8
+);
+
+(() => {
+  const reg = getLinesRegExp(10)
+  const str = `A Tale of Two Cities\nFrom Wikipedia,`;
+  const lines = str.match(reg);
+  assert('A Tale of ', lines[0], 'A Tale of ');
+  assert('Two Cities', lines[1], 'Two Cities');
+  assert('\nFrom ', lines[2], '\nFrom ');
+  assert('Wikipedia,', lines[3], 'Wikipedia,');
+})();
+
+assert(
+  `four lines: A Tale of Two Cities\nFrom Wikipedia,`,
+  countLines(`A Tale of Two Cities\nFrom Wikipedia,`, 10),
+  4
+);
+
+// tests that spaces will be collapsed
+assert(`15 lines: 1ongreader 2ongreader 3ongreader 4ongreader 5ongreader 6ongreader7ongreader 8ongreader 9ongreader 10ngreader 11ngreader 12ngreader 13ngreader 14ngreader 15ngreader`,
+  countLines(`1ongreader 2ongreader 3ongreader 4ongreader 5ongreader 6ongreader7ongreader 8ongreader 9ongreader 10ngreader 11ngreader 12ngreader 13ngreader 14ngreader 15ngreader`, 10),
+  10
+);
+
+testResults.forEach(result => {
+  if (result instanceof Error) {
+    console.error(result);
+  } else {
+    console.log(result);
+  }
+});
 
 const isDef = value => typeof value !== "undefined";
 
 const createVisibleInstructions = (
   originalContent,
   regexp,
-  match,
   areaHeight,
   areaWidth,
   scrollTop
 ) => {
   if (
-    regexp instanceof RegExp &&
     originalContent.length > 0 &&
-    match &&
     areaHeight &&
     areaWidth &&
     isDef(scrollTop)
@@ -212,8 +286,6 @@ const createVisibleInstructions = (
     const rows = Math.ceil(areaHeight / LINE_HEIGHT);
     const scrollPercentage = Math.abs(scrollTop) / areaHeight;
     const indexOfFirstVisibleLine = Math.floor(scrollTop / LINE_HEIGHT);
-    //const indexOfFirstVisibleLine = Math.floor(scrollPercentage * rows);
-    //const indexOfLastVisibleLine = indexOfFirstVisibleLine + rows - 1;
     const indexOfLastVisibleLine = indexOfFirstVisibleLine + rows;// add an extra visible row?
     if (enableLogging) console.log('indexOfFirstVisibleLine', indexOfFirstVisibleLine, 'indexOfLastVisibleLine', indexOfLastVisibleLine);
 
@@ -222,23 +294,24 @@ const createVisibleInstructions = (
     let lastOffset = 0;
     let hasTailInInstructions = false;
     let hasAlreadyPaddedFirstLine = false;
-    let didReachStartOfVisibleBlock = false;
-    let didReachEndOfVisibleBlock = false;
-
-    const getPadChars = h => {
-      if (h.endsWith(NLs)) return 0;
-      const remainder = h.length % columns;
-      const isDividedEvenly = remainder === 0;
-      if (isDividedEvenly) return 0;
-      return columns - remainder;
-    };
 
     const countLinesRegExp = getLinesRegExp(columns);
 
     const linesIterator = originalContent.matchAll(countLinesRegExp);
-    const matchIterator = regexp.global ? originalContent.matchAll(regexp) : [originalContent.match(regexp)];
+
+    function* matchGenerator() {
+      if (regexp instanceof RegExp) {
+        if (regexp.global) {
+          yield* originalContent.matchAll(regexp);
+        } else {
+          yield* [originalContent.match(regexp)];
+        }
+      }
+      yield* [];
+    }
 
     function* visibleLineGenerator(){
+      let didReachStartOfVisibleBlock = false;
       let lineIndex = 0;
       for (const line of linesIterator) {
         const isVisible = indexOfFirstVisibleLine <= lineIndex && lineIndex <= indexOfLastVisibleLine;
@@ -248,7 +321,6 @@ const createVisibleInstructions = (
           yield { line };
         } else {
           if (didReachStartOfVisibleBlock) {
-            if (!didReachEndOfVisibleBlock) didReachEndOfVisibleBlock = true;
             break;
           }
         }
@@ -256,143 +328,75 @@ const createVisibleInstructions = (
       }
     }
 
-    const visibleLinesIterator = visibleLineGenerator();
-
-    function* getContentForLineGenerator(line) {
-      let lineEnd = line.index + line[0].length;
-      const inBounds = (start, end) => {
-        return start < lineEnd && end >= line.index
-      };
-      for (const match of matchIterator) {
-        const matchIndex = match.index;
-        const matchEnd = matchIndex + match[0].length - 1;
-        const hasMatch = inBounds(matchIndex, matchEnd);
-        const m = hasMatch && match[0];
-
-        const headIndex = line.index;
-        const headEnd = match.index;
-        const hasHead = hasMatch && headIndex !== headEnd && inBounds(headIndex, headEnd);
-        const head = hasHead && originalContent.slice(headIndex, headEnd);
-
-        const tailIndex = Math.min(matchEnd + 1, lineEnd);
-        const tailEnd = lineEnd;
-        const hasTail = tailIndex !== tailEnd && hasMatch;
-        const tail = hasTail && originalContent.slice(tailIndex, tailEnd);
-
-        lastOffset = matchEnd + 1;
-
-        if (head || m || tail) {
-          line = yield { head, m, tail };
-          lineEnd = line.index + line[0].length;
+    function* matchesInViewport (start, end) {
+      let didEnterRange = false;
+      for (const match of matchGenerator()) {
+        const matchEnd = match.index + match[0].length - 1;
+        if (matchEnd >= start && match.index < end) {
+          // in bounds
+          if (!didEnterRange) didEnterRange = true;
+          yield match;
+        } else {
+          // out of bounds
+          if (didEnterRange) {
+            // matches to be in bounds, but now have a match that is past that
+            // and the for loop can be stopped early.
+            break;
+          }
         }
-      }
-
-      while (true) {
-        const tail = originalContent.slice(line.index, lineEnd);
-        line = yield { head: false, m: false, tail }
-        lineEnd = line.index + line[0].length;
       }
     }
 
     function* generateInstructions() {
       let contentForLineIterator;
-      for (const { line } of visibleLinesIterator) {
-        if (!contentForLineIterator) contentForLineIterator = getContentForLineGenerator(line);
-        const lineContent = line[0];
-        const result = contentForLineIterator.next(line).value;
-        if (result) {
-          const { head, m, tail } = result;
-          if (head) yield instruction(renderHead, head);
-          if (m) yield instruction(renderMatch, m);
-          if (tail) yield instruction(renderTail, tail);
+      const visibleLines = [...visibleLineGenerator()].map(({ line }) => line);
+      console.log('visibleLines', visibleLines);
+      if (visibleLines.length > 0) {
+        const firstLine = visibleLines[0];
+        const firstLineStart = firstLine.index;
+        const lastLine = visibleLines[visibleLines.length - 1];
+        const lastLineEnd = lastLine.index + lastLine[0].length;
+
+        const matches = matchesInViewport(firstLineStart, lastLineEnd);
+
+        let lastIndex = firstLineStart;
+
+        for (const match of matches) {
+          const matchContent = match[0];
+          const headIndex = lastIndex;
+          const headEnd = match.index;
+          const hasHead = headIndex !== headEnd;
+          const head = hasHead && originalContent.slice(headIndex, headEnd);
+          if (hasHead) yield instruction(renderHead, head);
+          yield instruction(renderMatch, matchContent);
+          lastIndex = match.index + matchContent.length;
         }
+
+        if (lastIndex <= lastLineEnd) {
+          const tail = originalContent.slice(lastIndex, lastLineEnd);
+          yield instruction(renderTail, tail);
+        }
+      } else {
+        // yield [];// no visible lines. yield an empty array
       }
     }
 
+
     instructions = [...generateInstructions()];
 
-
-
-
-    /*
-    const isContentVisible = (offsetStart, offsetEnd) => {
-      const linesIterator = originalContent.matchAll(countLinesRegExp);
-      const getIsVisible = (idx) => {
-        const visible = indexOfFirstVisibleLine <= idx && idx <= indexOfLastVisibleLine;
-        return visible;
-      };
-      let index = 0;
-      let topIndex = -1;
-      let bottomIndex = -1;
-      for (const line of linesIterator) {
-        const lineContent = line[0];
-        if (topIndex === -1 && (line.index <= offsetStart && offsetStart < line.index + lineContent.length)) {
-          topIndex = index;
-          const isTopInViewport = getIsVisible(topIndex);
-          if (isTopInViewport) return true;
-          if (topIndex > indexOfLastVisibleLine) return false;
-        }
-        if (bottomIndex === -1 && (line.index <= offsetEnd && offsetEnd < line.index + lineContent.length)){
-          bottomIndex = index;
-          const isBottomInViewport = getIsVisible(bottomIndex);
-          if (isBottomInViewport) return true;
-        }
-
-        if (topIndex !== -1 && bottomIndex !== -1) {
-          return topIndex <= indexOfLastVisibleLine && bottomIndex >= indexOfFirstVisibleLine;
-        }
-
-        index += 1;
-      }
-    };
-    const notVisible = [];
-    console.log('regexp', regexp);
-    // the function formats and collects each match into instructions,
-    // as long as it is within the first and last lines
-    content = content.replace(regexp, function replace(m) {
-      const argsLength = arguments.length;
-      const offset = arguments[argsLength - 2];
-      const head = content.slice(lastOffset, offset);
-      const needsTailInInstructions = regexp.global ? match.length - i < 3 : true;
-      const matchOffsetEnd = offset + Math.max(m.length - 1, 0);
-      console.log('needsTailInInstructions', needsTailInInstructions);
-      if (hasTailInInstructions) instructions.pop(); // remove the tail
-      if (head.length > 0 && isContentVisible(lastOffset, offset)) {
-        // if head, and needs to pad out to a full line
-        const mightNeedPadding = !hasAlreadyPaddedFirstLine && instructions.length === 0 && indexOfFirstVisibleLine > 0;
-        const numberOfCharsToPadRow = mightNeedPadding
-          ? getPadChars(head)
-          : 0;
-        if (numberOfCharsToPadRow > 0) {
-          instructions.push(instruction(renderHead, 'x'.repeat(numberOfCharsToPadRow)));
-          hasAlreadyPaddedFirstLine = true;
-        }
-        instructions.push(instruction(renderHead, head));
-      }
-      if (isContentVisible(offset, matchOffsetEnd)) {
-        if (!didReachStartOfVisibleBlock) didReachStartOfVisibleBlock = true;
-        instructions.push(instruction(renderMatch, m));
-      } else {
-        if (didReachStartOfVisibleBlock) didReachEndOfVisibleBlock = true;
-        if (enableLogging) notVisible.push({ m, i });
-      }
-
-      if (needsTailInInstructions) {
-        // if there's a tail, add it
-        const tailOffsetStart = offset + m.length;
-        const tail = content.slice(tailOffsetStart);
-        console.log('tail', tail);
-        if (tail && isContentVisible(tailOffsetStart, content.length - 1)) {
-          instructions.push(instruction(renderTail, tail));
-          hasTailInInstructions = true;
+    // a hack to remove a leading new line
+    ((firstInstruction) => {
+      if (firstInstruction) {
+        const content = firstInstruction[1];
+        if (content?.startsWith(NLs)) {
+          firstInstruction[1] = content.replace(NLs, '')
         }
       }
+    })(instructions[0]);
 
-      lastOffset = offset + m.length;
-      i += 1;
-      return "";
-    });
-    */
+
+
+
     if (enableLogging) {
       //console.log('not visible instructions', notVisible);
       console.log("instructions", instructions.map(i => ({template:'hmt'[i[0]],content: i[1]})));
@@ -405,7 +409,6 @@ const createVisibleInstructions = (
 const memoizedCreateVisibleInstructions = createSelector(
   getContent,
   getRegExp,
-  getMatch,
   s => s.areaHeight,
   s => s.areaWidth,
   s => s.asyncScrollTop,

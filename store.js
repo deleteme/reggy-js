@@ -28,6 +28,7 @@ const createStoreWorker = (path, reducer, initialState) => {
 
 const shortTestString = "0123456789";
 const testStringThatGoesLong = `123456789022345678903234567890423456789052345678906234567890723456789082345678909234567890023456789012345678902234567890323456789042345678905234567890`
+const testStringWithCollapsedLeadingSpaces = `1ongreader 2ongreader 3ongreader 4ongreader 5ongreader 6ongreader7ongreader 8ongreader 9ongreader 10ngreader 11ngreader 12ngreader 13ngreader 14ngreader 15ngreader`;
 
 const initialState = {
   debug: window.location.search.includes('debug=1'),
@@ -39,7 +40,7 @@ const initialState = {
   regExpString: "\\d{10}",
   //testString:
     //"This is a string that will be highlighted when your regular expression matches something.",
-  testString: testStringThatGoesLong,
+  testString: testStringWithCollapsedLeadingSpaces,
   testStringPanelScrollTop: 0,
   asyncScrollTop: 0,
   areaHeight: null,
