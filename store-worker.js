@@ -173,7 +173,8 @@ const getLinesRegExp = col => {
   //const reg = new RegExp(`\n?(.{1,${col}})( +|$)|(.{1,${col}})`, 'g')
   //const reg = new RegExp(`(.{1,${col - 1}}\s)|(.{1,${col}})`, 'g');
   //const reg = new RegExp(`(.{1,${col - 1}} )|(\n.{1,${col}})|(\n$)|(.{1,${col}})`, 'g');
-  const reg = new RegExp(`(\n.{1,${col - 1}} )|(\n(?:$|\n))|(.{1,${col}})`, 'g');
+  //const reg = new RegExp(`(\n.{1,${col - 1}} )|(\n(?:$|\n))|(.{1,${col}})`, 'g');
+  const reg = new RegExp(`(\n.{1,${col - 1}} )|(\n(?:$|\n))|(\\S.{0,${col - 1}})`, 'g');
   return reg;
 
   //let regexString = '.{1,' + col + '}';
@@ -254,7 +255,7 @@ assert(
 // tests that spaces will be collapsed
 assert(`15 lines: 1ongreader 2ongreader 3ongreader 4ongreader 5ongreader 6ongreader7ongreader 8ongreader 9ongreader 10ngreader 11ngreader 12ngreader 13ngreader 14ngreader 15ngreader`,
   countLines(`1ongreader 2ongreader 3ongreader 4ongreader 5ongreader 6ongreader7ongreader 8ongreader 9ongreader 10ngreader 11ngreader 12ngreader 13ngreader 14ngreader 15ngreader`, 10),
-  10
+  15
 );
 
 testResults.forEach(result => {
